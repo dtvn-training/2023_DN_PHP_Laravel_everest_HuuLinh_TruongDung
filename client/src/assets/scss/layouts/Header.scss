@@ -1,0 +1,36 @@
+.header-container {
+    background: #468faf;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #f2f2f2;
+    .right {
+      position: relative;
+      .img-container {
+        background: #f2f2f2;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+      .dropdown-contents {
+        position: absolute;
+        display: none;
+        white-space: nowrap;
+      }
+      &:hover {
+        .dropdown-contents {
+          display: block;
+          right: 0;
+          box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          button {
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+          }
+        }
+      }
+    }
+  }
+  
