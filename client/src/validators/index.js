@@ -11,11 +11,9 @@ export const validateName = (name) => {
 export const validateEmail = (email) => {
   if (email === "") {
     return "Please input email";
-  }
-  else if (!validator.isEmail(email)) {
+  } else if (!validator.isEmail(email)) {
     return "Invalid email";
-  }
-  else {
+  } else {
     return "";
   }
 };
@@ -23,28 +21,44 @@ export const validateEmail = (email) => {
 export const validatePassword = (password) => {
   if (password === "") {
     return "Please input password";
-  } 
-  else {
+  } else {
     return "";
   }
 };
 export const validatePasswordConfirmation = (password, passwordConfirm) => {
   if (password !== passwordConfirm) {
     return "Those passwords did not match. Try again.";
-  } 
-  else {
-    return ""; 
+  } else {
+    return "";
   }
 };
-export const validateRegisterForm = (name, email, password, passwordConfirm) => {
+export const validateRegisterForm = (
+  name,
+  email,
+  password,
+  passwordConfirm
+) => {
   const nameError = validateName(name);
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
-  const passwordConfirmError = validatePasswordConfirmation(password, passwordConfirm)
+  const passwordConfirmError = validatePasswordConfirmation(
+    password,
+    passwordConfirm
+  );
   return {
     nameError,
     emailError,
     passwordError,
     passwordConfirmError,
+  };
+};
+
+export const validateLoginForm = (email, password) => {
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
+
+  return {
+    emailError,
+    passwordError,
   };
 };

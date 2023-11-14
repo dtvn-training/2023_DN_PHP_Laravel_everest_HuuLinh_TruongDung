@@ -1,0 +1,90 @@
+$border-radius: 5px;
+form {
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+  padding: 30px 60px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  align-items: center;
+  margin: auto;
+  border-radius: $border-radius;
+  h1{
+    margin-bottom: 30px;
+  }
+  input {
+    padding: 20px;
+    border-radius: $border-radius;
+    margin-bottom: 30px ;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 18px;
+  }
+  button {
+    border: none;
+    padding: 20px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    border-radius: $border-radius;
+    &.green {
+      background: rgb(62, 161, 153);
+    }
+    &.red {
+      background: rgb(255, 67, 67);
+    }
+    &.blue {
+      background: rgb(103, 103, 255);
+    }
+    &:disabled{
+      background: #ccc;
+    }
+  }
+  .login-btn {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  .login-option {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    button {
+        width: 49%;
+    }
+  }
+  .error-alert{
+    width: 100%;
+    margin-bottom: 30px;
+    font-size: 14px;
+    color: red;
+    background: rgb(255, 184, 184);
+    padding: 10px;
+    border-radius: $border-radius;
+    border:  1px solid red;
+  }
+  
+}
+@media only screen and (max-width: 600px) {
+  form{
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 20px 10px;
+    box-shadow: none;
+    .error-alert{
+      width: auto;
+    }
+  }
+ 
+}
+@media only screen and (max-width: 300px) {
+  form{
+    .login-option{
+      flex-direction: column;
+      button{
+        width: 100%;
+        margin-bottom: 30px;
+      }
+    }
+  }
+}
