@@ -17,14 +17,8 @@ const DefaultLayout = ({ children }) => {
       setIsloading(true);
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
-        const token = accessToken.replace(/"/g, "");
-        const headers = {
-          Authorization: `Bearer ${token}`,
-        };
         try {
-          const res = await axios.get("/api/auth/profile", {
-            headers: headers,
-          });
+          const res = await axios.get("/api/auth/profile");
           if (res.data.id) {
             setData(res.data);
           } else {
@@ -32,6 +26,7 @@ const DefaultLayout = ({ children }) => {
           }
         } catch (e) {
           console.error(e);
+          navigate("/login");
         }
       } else {
         navigate("/login");

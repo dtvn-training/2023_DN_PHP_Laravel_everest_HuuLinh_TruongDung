@@ -3,6 +3,7 @@ import "../assets/scss/pages/LoginPage.scss";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { validateLoginForm } from "../validators";
+import api from "../api/axios";
 
 const initState = {
   email: "",
@@ -27,7 +28,8 @@ const LoginPage = () => {
     const { emailError, passwordError } = validateLoginForm(email, password);
     if (emailError === "" && passwordError === "") {
       try {
-        const res = await axios.post("/api/auth/login", { email, password });
+        api;
+        const res = await api.post("/api/auth/login", { email, password });
         localStorage.setItem(
           "accessToken",
           JSON.stringify(res.data.access_token)
