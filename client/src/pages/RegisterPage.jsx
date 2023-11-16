@@ -76,28 +76,28 @@ const RegisterPage = () => {
         type="text"
         name="name"
         placeholder="Your Name"
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
       />
       <input
         value={info.email}
         type="text"
         placeholder="Email"
         name="email"
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
       />
       <input
         value={info.password}
         type="password"
         placeholder="Password"
         name="password"
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
       />
       <input
         value={info.password_confirmation}
         type="password"
         name="password_confirmation"
         placeholder="Confirm Password"
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
       />
 
       {error && <p className="error-alert">{error}</p>}

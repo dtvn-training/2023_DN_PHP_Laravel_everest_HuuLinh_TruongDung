@@ -55,14 +55,14 @@ const LoginPage = () => {
         type="text"
         placeholder="Email"
         name="email"
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
       />
       <input
         value={info.password}
         type="password"
         placeholder="Password"
         name="password"
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
       />
       {error && <p className="error-alert">{error}</p>}
       <button className="login-btn green" type="submit" disabled={isLoading}>
