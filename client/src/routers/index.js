@@ -1,6 +1,7 @@
-import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
-import RegisterPage from "../pages/RegisterPage";
+import React from 'react';
+const HomePage = React.lazy(() => import("../pages/HomePage"));
+const LoginPage = React.lazy(() => import("../pages/LoginPage"));
+const RegisterPage = React.lazy(() => import("../pages/RegisterPage"));
 
 const publicRoutes = [
   { path: "/register", component: RegisterPage },
