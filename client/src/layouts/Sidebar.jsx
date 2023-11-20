@@ -10,7 +10,7 @@ const paths = [
 
 const Sidebar = () => {
   const data = useSelector(profile);
-console.log(data)
+  
   return (
     <div className="sidebar-container">
       <div className="info-container">
