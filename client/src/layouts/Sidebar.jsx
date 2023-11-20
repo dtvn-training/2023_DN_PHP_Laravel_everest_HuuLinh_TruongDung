@@ -1,4 +1,6 @@
+import { useSelector } from "react-redux";
 import "../assets/scss/layouts/Sidebar.scss";
+import { profile } from "../redux/selector";
 
 const paths = [
   { label: "Dashboard" },
@@ -6,12 +8,14 @@ const paths = [
   { label: "Account" },
 ];
 
-const Sidebar = ({ name }) => {
+const Sidebar = () => {
+  const data = useSelector(profile);
+console.log(data)
   return (
     <div className="sidebar-container">
       <div className="info-container">
         <div className="avatar"></div>
-        <h3>{name}</h3>
+        <h3>{data.name}</h3>
       </div>
       <div className="nav-bar">
         {paths.map((path, i) => (

@@ -4,6 +4,7 @@ import axios from "../api/axios";
 import { validateRegisterForm } from "../validators";
 
 import "../assets/scss/pages/RegisterPage.scss";
+import api from "../api/axios";
 
 const initState = {
   name: "",
@@ -34,7 +35,7 @@ const RegisterPage = () => {
     if (nameError === "" && emailError === "" && passwordError === "" && passwordConfirmError === "") {
       setError("")
       try {
-        const res = await axios.post("/api/auth/register", { name, email, password, password_confirmation });
+        const res = await api.post("/api/auth/register", { name, email, password, password_confirmation });
 
         // Check if the response contains an "email" error
         if (res.data.email && res.data.email.length > 0) {

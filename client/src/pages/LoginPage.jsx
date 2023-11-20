@@ -15,12 +15,14 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setInfo({
       ...info,
       [e.target.name]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -49,6 +51,7 @@ const LoginPage = () => {
     }
     setIsLoading(false);
   };
+  
   return (
     <form method="POST" onSubmit={handleSubmit}>
       <h1>WELCOME</h1>
