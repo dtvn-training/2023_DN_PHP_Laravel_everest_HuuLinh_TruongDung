@@ -1,3 +1,5 @@
+@import '../GlobalStyle.scss';
+
 $border-radius: 5px;
 form {
   display: flex;
@@ -28,7 +30,7 @@ form {
     font-size: 18px;
     border-radius: $border-radius;
     &.green {
-      background: rgb(62, 161, 153);
+      background: $main-bg-color;
     }
     &.red {
       background: rgb(255, 67, 67);

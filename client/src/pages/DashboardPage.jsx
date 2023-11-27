@@ -1,4 +1,4 @@
-const HomePage = () => {
+const DashboardPage = () => {
     return (
       <>
         <h1>Welcome</h1>
@@ -6,5 +6,5 @@ const HomePage = () => {
     );
   };
   
-  export default HomePage;
+  export default DashboardPage;
   

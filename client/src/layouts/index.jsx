@@ -39,7 +39,7 @@ const DefaultLayout = ({ children }) => {
           <Header />
           <div style={{ display: "flex", flex: 1 }}>
             <Sidebar />
-            <div style={{ flex: 1 }}>{children}</div>
+            <div style={{ flex: 1, padding: 40   }}>{children}</div>
           </div>
         </>
       )}
