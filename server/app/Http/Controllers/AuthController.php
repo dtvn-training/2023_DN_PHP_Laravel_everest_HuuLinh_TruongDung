@@ -76,9 +76,9 @@ class AuthController extends Controller
             if(!$user) {
                 return response()->json(['error' => 'User not found'],404);
             }
-            // $token = auth()->login($user);
+            $token = auth()->login($user);
 
-            // return $this->createNewToken($token, '123');
+            return $this->createNewToken($token, 'null');
         }
         catch (JWTException $e) {
             return response()->json(['error' => 'Refresh Token Invalid', 500]);
