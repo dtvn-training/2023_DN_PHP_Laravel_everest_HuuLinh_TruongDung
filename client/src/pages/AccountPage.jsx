@@ -7,51 +7,6 @@ import { toast } from "react-toastify";
 import { createUserFormField, editUserFormField } from "../utils/userForm";
 import DeleteModal from "../components/DeleteModal";
 
-const fakeData = [
-  {
-    id: 4,
-    first_name: "Nguyễn Hữuuu",
-    email: "test@gmail.com",
-    email_verified_at: null,
-    last_name: "Lĩnhhhh",
-    image: null,
-    role_id: 1,
-    address: "Đà Nẵng",
-    phone: "099999",
-    delete_flag: null,
-    created_at: "2023-11-21T09:29:30.000000Z",
-    updated_at: "2023-11-21T09:36:55.000000Z",
-  },
-  {
-    id: 4,
-    first_name: "Nguyễn Hữuuu",
-    email: "test@gmail.com",
-    email_verified_at: null,
-    last_name: "Lĩnhhhh",
-    image: null,
-    role_id: 2,
-    address: "Đà Nẵng",
-    phone: "099999",
-    delete_flag: null,
-    created_at: "2023-11-21T09:29:30.000000Z",
-    updated_at: "2023-11-21T09:36:55.000000Z",
-  },
-  {
-    id: 4,
-    first_name: "Nguyễn Hữuuu",
-    email: "test@gmail.com",
-    email_verified_at: null,
-    last_name: "Lĩnhhhh",
-    image: null,
-    role_id: 2,
-    address: "Đà Nẵng",
-    phone: "099999",
-    delete_flag: null,
-    created_at: "2023-11-21T09:29:30.000000Z",
-    updated_at: "2023-11-21T09:36:55.000000Z",
-  },
-];
-
 const initState = {
   resData: {
     current_page: "",
@@ -80,7 +35,7 @@ const AccountPage = () => {
   });
 
   useEffect(() => {
-    // fetchUser();
+    fetchUser();
   }, []);
 
   const handleSearchChange = async (e) => {};
@@ -231,7 +186,7 @@ const AccountPage = () => {
           </tr>
         </thead>
         <tbody>
-          {fakeData.map((user, index) => {
+          {pageState.resData.data.map((user, index) => {
             return (
               <tr key={index}>
                 <td>{user.id}</td>
