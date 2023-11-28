@@ -1,7 +1,7 @@
 @import '../GlobalStyle.scss';
 
 $border-radius: 5px;
-form {
+.login-form {
   display: flex;
   flex-direction: column;
   min-width: 600px;

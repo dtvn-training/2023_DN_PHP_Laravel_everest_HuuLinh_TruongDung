@@ -1,40 +1,39 @@
 import Rodal from "rodal";
 import "rodal/lib/rodal.css";
 import "../assets/scss/components/ModalForm.scss";
-
-const fakeData = [
-  {
-    section_title: "Details",
-    contents: [
-      { label: "Email", type: "text", placeholder: "example@gmail.com" },
-      { label: "First name", type: "text", placeholder: "first name" },
-      { label: "Last name", type: "text", placeholder: "last name" },
-      {
-        label: "Role",
-        type: "select",
-        options: [
-          { label: "DAC", value: "DAC" },
-          { label: "advertiser", value: "advertiser" },
-        ],
-      },
-      { label: "Address", type: "text", placeholder: "your address" },
-      { label: "Phone", type: "tel", placeholder: "0999999999" },
-      { label: "Password", type: "password", placeholder: "*******" },
-      { label: "Confirm password", type: "password", placeholder: "*******" },
-    ],
-  },
-];
+import { useEffect, useState } from "react";
 
 const ModalForm = ({
   title,
   visible,
   setVisible,
   customFunction,
-  formContent,
+  formField,
 }) => {
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    const initialData = {};
+    formField.forEach((section) => {
+      section.contents.forEach((content) => {
+        if (content.default) {
+          initialData[content.name] = content.default;
+        }
+      });
+    });
+    setFormData(initialData);
+  }, [formField]);
+
+  const handleFieldChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    customFunction();
+    customFunction(formData);
   };
 
   return (
@@ -42,7 +41,7 @@ const ModalForm = ({
       <div className="modal-container">
         <h2>{title}</h2>
         <form onSubmit={handleFormSubmit}>
-          {fakeData.map((d, i) => {
+          {formField.map((d, i) => {
             return (
               <div className="section-item" key={i}>
                 <div className="section-header">{d.section_title}</div>
@@ -51,7 +50,12 @@ const ModalForm = ({
                     <div className="input-field" key={index}>
                       <label>{content.label + ":"}</label>
                       {content.type === "select" ? (
-                        <select>
+                        <select
+                          onChange={handleFieldChange}
+                          name={content.name}
+                          required
+                          value={content.default ? content.default : ""}
+                        >
                           {content.options.map((option, i) => (
                             <option key={i} value={option.value}>
                               {option.label}
@@ -62,6 +66,10 @@ const ModalForm = ({
                         <input
                           type={content.type}
                           placeholder={content.placeholder}
+                          onChange={handleFieldChange}
+                          name={content.name}
+                          required
+                          value={content.default ? content.default : ""}
                         />
                       )}
                     </div>

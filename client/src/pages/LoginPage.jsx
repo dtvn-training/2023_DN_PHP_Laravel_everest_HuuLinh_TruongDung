@@ -71,7 +71,7 @@ const LoginPage = () => {
   return isAuthLoading ? (
     <h1>Loading...</h1>
   ) : (
-    <form method="POST" onSubmit={handleSubmit}>
+    <form method="POST" onSubmit={handleSubmit} className="login-form">
       <h1>WELCOME</h1>
       <input
         value={info.email}
