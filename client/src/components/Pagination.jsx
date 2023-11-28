@@ -1,7 +1,7 @@
 import ReactPaginate from "react-paginate";
 import "../assets/scss/components/Pagination.scss";
 
-const Pagination = ({ totalPages }) => {
+const Pagination = ({ totalPages,nextURL,prevURL }) => {
   const handlePageClick = async () => {};
 
   return (

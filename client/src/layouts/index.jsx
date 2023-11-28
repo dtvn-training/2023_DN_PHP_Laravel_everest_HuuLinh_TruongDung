@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { profileReducer } from "../redux/slices/ProfileSlice";
 
 const DefaultLayout = ({ children }) => {
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsloading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

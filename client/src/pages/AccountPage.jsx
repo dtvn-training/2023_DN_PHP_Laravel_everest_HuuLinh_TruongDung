@@ -5,37 +5,22 @@ import ModalForm from "../components/ModalForm";
 import api from "../api/axios";
 import { toast } from "react-toastify";
 import { createUserFormField, editUserFormField } from "../utils/userForm";
+import DeleteModal from "../components/DeleteModal";
 
 const fakeData = [
   {
-    id: 1,
-    first_name: null,
-    email: "admin@gmail.com",
+    id: 4,
+    first_name: "Nguyễn Hữuuu",
+    email: "test@gmail.com",
     email_verified_at: null,
-    last_name: null,
+    last_name: "Lĩnhhhh",
     image: null,
     role_id: 1,
-    address: null,
-    phone: null,
+    address: "Đà Nẵng",
+    phone: "099999",
     delete_flag: null,
-    created_at: "2023-11-20T02:06:38.000000Z",
-    updated_at: "2023-11-20T02:06:38.000000Z",
-    role: "admin",
-  },
-  {
-    id: 2,
-    first_name: null,
-    email: "huulinh123@gmail.com",
-    email_verified_at: null,
-    last_name: null,
-    image: null,
-    role_id: 1,
-    address: null,
-    phone: null,
-    delete_flag: null,
-    created_at: "2023-11-21T08:35:54.000000Z",
-    updated_at: "2023-11-21T08:35:54.000000Z",
-    role: "admin",
+    created_at: "2023-11-21T09:29:30.000000Z",
+    updated_at: "2023-11-21T09:36:55.000000Z",
   },
   {
     id: 4,
@@ -44,31 +29,72 @@ const fakeData = [
     email_verified_at: null,
     last_name: "Lĩnhhhh",
     image: null,
-    role_id: null,
+    role_id: 2,
     address: "Đà Nẵng",
     phone: "099999",
     delete_flag: null,
     created_at: "2023-11-21T09:29:30.000000Z",
     updated_at: "2023-11-21T09:36:55.000000Z",
-    role: "DAC",
+  },
+  {
+    id: 4,
+    first_name: "Nguyễn Hữuuu",
+    email: "test@gmail.com",
+    email_verified_at: null,
+    last_name: "Lĩnhhhh",
+    image: null,
+    role_id: 2,
+    address: "Đà Nẵng",
+    phone: "099999",
+    delete_flag: null,
+    created_at: "2023-11-21T09:29:30.000000Z",
+    updated_at: "2023-11-21T09:36:55.000000Z",
   },
 ];
 
 const initState = {
-  resData: { current_page: "", data: [], first_page_url: "" },
-  currentId: "",
+  resData: {
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: 0,
+    last_page: 0,
+    last_page_url: null,
+    links: [],
+    next_page_url: null,
+    path: null,
+    per_page: 0,
+    prev_page_url: null,
+    to: 0,
+    total: 0,
+  },
+  currentUser: {},
 };
 
 const AccountPage = () => {
   const [pageState, setPageState] = useState(initState);
-  const [createformVisible, setCreateFormVisible] = useState(false);
-  const [editformVisible, setEditFormVisible] = useState(false);
+  const [formState, setFormState] = useState({
+    create: false,
+    edit: false,
+    delete: false,
+  });
 
   useEffect(() => {
-    fetchUser();
+    // fetchUser();
   }, []);
 
   const handleSearchChange = async (e) => {};
+
+  const getRole = (role_id) => {
+    switch (role_id) {
+      case 1:
+        return "DAC";
+      case 2:
+        return "Advertiser";
+      case 3:
+        return "Admin";
+    }
+  };
 
   const handleChange = (name, value) => {
     setPageState({
@@ -77,8 +103,16 @@ const AccountPage = () => {
     });
   };
 
+  const handleOpenForm = (name) => {
+    setFormState({ ...formState, [name]: true });
+  };
+
+  const closeOpenForm = (name) => {
+    setFormState({ ...formState, [name]: false });
+  };
+
   const handleOpenEditForm = (data) => {
-    handleChange("currentId", data.id);
+    handleChange("currentUser", data);
     editUserFormField[0].contents = editUserFormField[0].contents.map(
       (content) => {
         if (data.hasOwnProperty(content.name)) {
@@ -87,7 +121,12 @@ const AccountPage = () => {
         return content;
       }
     );
-    setEditFormVisible(true);
+    handleOpenForm("edit");
+  };
+
+  const handleOpenDeleteForm = (data) => {
+    handleChange("currentUser", data);
+    handleOpenForm("delete");
   };
 
   const fetchUser = async () => {
@@ -104,7 +143,7 @@ const AccountPage = () => {
       try {
         const res = await api.post("api/user/create", data);
         toast.success(res.data.message);
-        setCreateFormVisible(false);
+        handleOpenForm("create");
         fetchUser();
       } catch (error) {
         toast.error(error.message);
@@ -117,11 +156,24 @@ const AccountPage = () => {
   const handleEditAccount = async (data) => {
     try {
       const res = await api.post(
-        `api/user/update/${pageState.currentId}`,
+        `api/user/update/${pageState.currentUser.id}`,
         data
       );
       toast.success(res.data.message);
-      setEditFormVisible(false);
+      handleOpenForm("edit");
+      fetchUser();
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const res = await api.delete(
+        `api/user/delete/${pageState.currentUser.id}`
+      );
+      toast.success(res.data.message);
+      handleOpenForm("delete");
       fetchUser();
     } catch (error) {
       toast.error(error.message);
@@ -131,18 +183,26 @@ const AccountPage = () => {
   return (
     <div className="account-page-container">
       <ModalForm
-        setVisible={setCreateFormVisible}
-        visible={createformVisible}
+        setVisible={() => closeOpenForm("create")}
+        visible={formState.create}
         title={"Create Account"}
         customFunction={handleCreateAccount}
         formField={createUserFormField}
       />
       <ModalForm
-        setVisible={setEditFormVisible}
-        visible={editformVisible}
+        setVisible={() => closeOpenForm("edit")}
+        visible={formState.edit}
         title={"Edit Account"}
         customFunction={handleEditAccount}
         formField={editUserFormField}
+        defaultFormValue={pageState.currentUser}
+      />
+      <DeleteModal
+        setVisible={() => closeOpenForm("delete")}
+        visible={formState.delete}
+        title={"Delete warning"}
+        customFunction={handleDeleteAccount}
+        message={"This will delete the account"}
       />
       <div className="control-bar">
         <div className="left-control">
@@ -153,7 +213,7 @@ const AccountPage = () => {
           />
         </div>
         <div className="right-control">
-          <button type="button" onClick={() => setCreateFormVisible(true)}>
+          <button type="button" onClick={() => handleOpenForm("create")}>
             Create Account
           </button>
         </div>
@@ -171,15 +231,15 @@ const AccountPage = () => {
           </tr>
         </thead>
         <tbody>
-          {fakeData.map((user) => {
+          {fakeData.map((user, index) => {
             return (
-              <tr key={user.id}>
+              <tr key={index}>
                 <td>{user.id}</td>
                 <td>{user.first_name + " " + user.last_name}</td>
                 <td>{user.email}</td>
                 <td>{user.address}</td>
                 <td>{user.phone}</td>
-                <td>{user.role}</td>
+                <td>{getRole(user.role_id)}</td>
                 <td>
                   <button
                     className="edit-btn"
@@ -188,7 +248,11 @@ const AccountPage = () => {
                   >
                     Edit
                   </button>
-                  <button className="delete-btn" type="button">
+                  <button
+                    className="delete-btn"
+                    type="button"
+                    onClick={() => handleOpenDeleteForm(user)}
+                  >
                     Delete
                   </button>
                 </td>
@@ -197,7 +261,7 @@ const AccountPage = () => {
           })}
         </tbody>
       </table>
-      <Pagination totalPages={10} />
+      <Pagination totalPages={pageState.resData.total} />
     </div>
   );
 };
