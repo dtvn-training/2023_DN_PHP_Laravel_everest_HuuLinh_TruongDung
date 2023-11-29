@@ -1,6 +1,6 @@
 @import "../GlobalStyle.scss";
 
-.account-page-container {
+.page-container {
   height: 100%;
   .control-bar {
     display: flex;
@@ -47,6 +47,27 @@
         .delete-btn {
           background: $delete-btn-color;
           color: $light-text-color;
+        }
+        .double-item-cell {
+          display: flex;
+          align-items: center;
+          .img-container {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+        }
+        &.no-wrap {
+          white-space: nowrap;
+        }
+        &.break-word{
+          overflow-wrap: break-word;
+          max-width: 100px;
         }
       }
     }

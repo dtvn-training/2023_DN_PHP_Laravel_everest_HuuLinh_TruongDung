@@ -8,8 +8,11 @@
     }
     form {
       padding: 10px 0;
+      overflow-y: auto;
+      max-height: 85vh;
       .section-item {
         padding: 0 20px;
+        margin-bottom: 20px;
         .section-header {
           color: $light-text-color;
           background: $main-bg-color;
@@ -22,9 +25,9 @@
           display: flex;
           align-items: center;
           padding: 0 20px;
-          label {
+          .form-label {
             text-align: right;
-            margin-right: 20px;
+            margin-right: 50px;
             width: 20%;
             font-weight: bold;
             font-size: 14px;
@@ -34,7 +37,79 @@
             flex: 1;
             padding: 10px;
           }
+          .img-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border: 1px solid $main-border-color;
+            height: 200px;
+            position: relative;
+            input[type="file"] {
+              display: none;
+              cursor: pointer;
+              background: $main-bg-color;
+              height: 50px;
+            }
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+            // label {
+            //   display: none;
+            //   position: absolute;
+            //   cursor: pointer;
+            //   background: $main-bg-color;
+            //   padding: 10px;
+            //   border-radius: $main-border-radius;
+            //   color: $light-text-color;
+            //   font-size: 14px;
+            //   font-weight: bold;
+            // }
+            &:hover {
+              input {
+                display: flex;
+                align-items: center;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+              }
+            }
+          }
+          .datetime-field {
+            width: 514px;
+            display: flex;
+            .datetime-item {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              width: 50%;
+              label {
+                font-size: 14px;
+                font-weight: bold;
+                margin: 0 10px;
+              }
+              input {
+                border: none;
+                border-bottom: 1px solid $main-border-color;
+                outline: none;
+              }
+            }
+          }
         }
+      }
+      .error-message {
+        font-size: 14px;
+        color: #ff0000;
+        background: #ffb8b8;
+        padding: 10px;
+        margin: 0 40px;
+        border-radius: $main-border-radius;
+        border: 1px solid #ff0000;
       }
       .modal-control-bar {
         margin-top: 20px;

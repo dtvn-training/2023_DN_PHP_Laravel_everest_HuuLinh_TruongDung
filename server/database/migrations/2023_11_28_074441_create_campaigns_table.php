@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('campaigns', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('campaign_name');
             $table->integer('status')->unsigned()->default(1)->comment('1:active 0:inactive');
             $table->bigInteger('used_amount');
             $table->double('usage_rate',2);

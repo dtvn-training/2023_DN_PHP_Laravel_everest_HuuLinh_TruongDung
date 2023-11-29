@@ -19,14 +19,17 @@ const LoginPage = () => {
   useEffect(() => {
     const getProfile = async () => {
       setIsAuthLoading(true);
-      try {
-        const res = await api.get("/api/auth/profile");
-        if (res.data.id) {
-          navigate("/");
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        try {
+          const res = await api.get("/api/auth/profile");
+          if (res.data.id) {
+            navigate("/");
+          }
+        } catch (e) {
+          console.error(e);
+          setIsAuthLoading(false);
         }
-      } catch (e) {
-        console.error(e);
-        setIsAuthLoading(false);
       }
       setIsAuthLoading(false);
     };
@@ -51,12 +54,16 @@ const LoginPage = () => {
           "accessToken",
           JSON.stringify(res.data.access_token)
         );
+        localStorage.setItem(
+          "refreshToken",
+          JSON.stringify(res.data.refresh_token)
+        );
         navigate("/");
         setInfo(initState);
         setError("");
       } catch (e) {
         if (e.response && e.response.status === 401) {
-          setError(e.response.data);
+          setError(e.response.data.message);
         } else {
           console.error(e);
         }

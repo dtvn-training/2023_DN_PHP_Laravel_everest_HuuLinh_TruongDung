@@ -10,24 +10,26 @@ const DeleteModal = ({
   customFunction,
 }) => {
   return (
-    <Rodal visible={visible} onClose={() => setVisible(false)}>
-      <div className="modal-container">
-        <h2>{title}</h2>
-        <p>{message}</p>
-        <div className="delete-control-bar">
-          <button
-            type="button"
-            onClick={() => setVisible(false)}
-            className="cancel-btn"
-          >
-            Cancel
-          </button>
-          <button type="button" className="delete-btn" onClick={customFunction}>
-            Delete
-          </button>
-        </div>
-      </div>
-    </Rodal>
+   <div className="delete-modal">
+     <Rodal width={700} visible={visible} onClose={() => setVisible(false)}>
+       <div className="modal-container">
+         <h2>{title}</h2>
+         <p>{message}</p>
+         <div className="delete-control-bar">
+           <button
+             type="button"
+             onClick={() => setVisible(false)}
+             className="cancel-btn"
+           >
+             Cancel
+           </button>
+           <button type="button" className="delete-btn" onClick={customFunction}>
+             Delete
+           </button>
+         </div>
+       </div>
+     </Rodal>
+   </div>
   );
 };
 

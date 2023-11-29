@@ -46,7 +46,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
         if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json("Unauthorized", 401);
+            return response()->json(["message" => "Unauthorized"], 401);
         }
 
         $data = [
@@ -74,14 +74,14 @@ class AuthController extends Controller
             $decoded = JWTAuth::getJWTProvider()->decode($refreshToken);
             $user = User::find($decoded['sub']);
             if(!$user) {
-                return response()->json(['error' => 'User not found'],404);
+                return response()->json(['message' => 'User not found'],404);
             }
             $token = auth()->login($user);
 
             return $this->createNewToken($token, 'null');
         }
         catch (JWTException $e) {
-            return response()->json(['error' => 'Refresh Token Invalid', 500]);
+            return response()->json(['message' => 'Refresh Token Invalid', 500]);
         };
     }
     public function profile()
@@ -90,7 +90,7 @@ class AuthController extends Controller
             return response()->json(auth()->user());
         }
         catch(JWTException $e){
-            return response()->json(['error' => 'Unauthorized'],401);
+            return response()->json(['message' => 'Unauthorized'],401);
         }
     }
     public function logout()

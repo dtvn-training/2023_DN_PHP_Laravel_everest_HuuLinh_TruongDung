@@ -1,4 +1,5 @@
-$border-radius: 5px;
+@import '../GlobalStyle.scss';
+
 form {
   display: flex;
   flex-direction: column;
@@ -7,13 +8,13 @@ form {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   align-items: center;
   margin: auto;
-  border-radius: $border-radius;
+  border-radius: $main-border-radius;
   h1{
     margin-bottom: 30px;
   }
   input {
     padding: 20px;
-    border-radius: $border-radius;
+    border-radius: $main-border-radius;
     margin-bottom: 30px ;
     border: 1px solid #ccc;
     width: 100%;
@@ -26,7 +27,7 @@ form {
     cursor: pointer;
     font-weight: bold;
     font-size: 18px;
-    border-radius: $border-radius;
+    border-radius: $main-border-radius;
     &.green {
       background: rgb(62, 161, 153);
     }
@@ -59,7 +60,7 @@ form {
     color: red;
     background: rgb(255, 184, 184);
     padding: 10px;
-    border-radius: $border-radius;
+    border-radius: $main-border-radius;
     border:  1px solid red;
   }
   .success-alert{
@@ -69,7 +70,7 @@ form {
     color: green;
     background: rgb(167, 230, 167);
     padding: 10px;
-    border-radius: $border-radius;
+    border-radius: $main-border-radius;
     border:  1px solid green;
   }
   
