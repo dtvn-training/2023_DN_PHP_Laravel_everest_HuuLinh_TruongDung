@@ -1,8 +1,11 @@
 import ReactPaginate from "react-paginate";
 import "../assets/scss/components/Pagination.scss";
 
-const Pagination = ({ totalPages,nextURL,prevURL }) => {
-  const handlePageClick = async () => {};
+const Pagination = ({ totalPages, setPage }) => {
+  const handlePageClick = (data) => {
+    let selected = data.selected;
+    setPage("current_page", selected + 1);
+  };
 
   return (
     <div className="pagination-bar">

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import "../assets/scss/pages/AccountPage.scss";
 import Pagination from "../components/Pagination";
 import ModalForm from "../components/ModalForm";
 import api from "../api/axios";
 import { toast } from "react-toastify";
 import { createUserFormField, editUserFormField } from "../utils/userForm";
 import DeleteModal from "../components/DeleteModal";
+import DownloadCSVButton from "../components/DownLoadCSVButton";
 
 const initState = {
   resData: {
@@ -24,6 +24,7 @@ const initState = {
     total: 0,
   },
   currentUser: {},
+  current_page: 1,
 };
 
 const AccountPage = () => {
@@ -36,7 +37,7 @@ const AccountPage = () => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [pageState.current_page]);
 
   const handleSearchChange = async (e) => {
     try {
@@ -93,7 +94,7 @@ const AccountPage = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await api.get("api/user/get");
+      const res = await api.get(`api/user/get?page=${pageState.current_page}`);
       handleChange("resData", res.data[0]);
     } catch (error) {
       console.error(error);
@@ -144,7 +145,7 @@ const AccountPage = () => {
   };
 
   return (
-    <div className="account-page-container">
+    <div className="page-container">
       <ModalForm
         setVisible={() => handleCloseForm("create")}
         visible={formState.create}
@@ -176,6 +177,7 @@ const AccountPage = () => {
           />
         </div>
         <div className="right-control">
+          <DownloadCSVButton/>
           <button type="button" onClick={() => handleOpenForm("create")}>
             Create Account
           </button>
@@ -224,7 +226,10 @@ const AccountPage = () => {
           })}
         </tbody>
       </table>
-      <Pagination totalPages={pageState.resData.last_page} />
+      <Pagination
+        totalPages={pageState.resData.last_page}
+        setPage={handleChange}
+      />
     </div>
   );
 };

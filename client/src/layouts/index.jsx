@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { profileReducer } from "../redux/slices/ProfileSlice";
+import "../assets/scss/layouts/Page.scss";
 
 const DefaultLayout = ({ children }) => {
   const [isLoading, setIsloading] = useState(true);
@@ -39,7 +40,7 @@ const DefaultLayout = ({ children }) => {
           <Header />
           <div style={{ display: "flex", flex: 1 }}>
             <Sidebar />
-            <div style={{ flex: 1, padding: 40   }}>{children}</div>
+            <div style={{ flex: 1, padding: 40 }}>{children}</div>
           </div>
         </>
       )}

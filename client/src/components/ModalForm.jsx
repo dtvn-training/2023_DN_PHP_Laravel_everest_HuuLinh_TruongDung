@@ -37,7 +37,7 @@ const ModalForm = ({
       toast.error(error.message);
     }
   };
-  
+
   return (
     <div className="form-model">
       <Rodal visible={visible} onClose={() => setVisible(false)}>
@@ -57,8 +57,10 @@ const ModalForm = ({
                             onChange={handleFieldChange}
                             name={content.name}
                             required
-                            defaultValue={
-                              content.default ? content.default : ""
+                            value={
+                              formData && formData[content.name] !== undefined
+                                ? formData[content.name]
+                                : content.default
                             }
                           >
                             {content.options.map((option, i) => (
