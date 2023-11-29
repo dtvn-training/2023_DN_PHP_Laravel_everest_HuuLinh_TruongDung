@@ -14,17 +14,17 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('first_name')->nullable();
-            $table->string('name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('last_name')->nullable();
             $table->string('image')->nullable();
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null'); // Tạo khóa ngoại
+            $table->bigInteger('role_id')->nullable();
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
             $table->boolean('delete_flag')->nullable();
+            $table->string('name')->nullable();
             $table->timestamps();
         });
     }
@@ -33,10 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['role_id']); // Xóa khóa ngoại khi rollback migration
-        });
-
         Schema::dropIfExists('users');
     }
 };
