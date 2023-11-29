@@ -13,9 +13,9 @@ class UserController extends Controller
         if (!empty($id)) {
             $user = User::where('id', $id)->delete();
             if ($user > 0) {
-                return response()->json('Delete user successfully');
+                return response()->json(['message' => 'Delete user successfully']);
             } else {
-                return response()->json('User not found or error deleting user', 404);
+                return response()->json(['message' => 'User not found or error deleting user'], 404);
             }
         } else {
             return response()->json('Invalid user ID', 400);
@@ -25,31 +25,36 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
-            'first_name ' => 'required',
-            'last_name ' => 'required',
-            'role' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'role_id' => 'required',
             'address' => 'required',
             'phone' => 'required',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json("User not found", 404);
-        }
-        $user->update($request->all());
-        return response()->json(['message' => 'Update user successfully']);
 
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json(['message' => "User not found"], 404);
+        }
+
+        $user->update($request->all());
+
+        return response()->json(['message' => 'Update user successfully']);
     }
+
     public function addUser(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
-            'first_name ' => 'required',
-            'last_name ' => 'required',
-            'role' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'role_id' => 'required',
             'address' => 'required',
             'phone' => 'required',
             'password' => 'required|min:6',
