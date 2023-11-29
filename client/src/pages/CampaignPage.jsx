@@ -1,12 +1,38 @@
+import { useState } from "react";
 import DownloadCSVButton from "../components/DownLoadCSVButton";
+import ModalForm from "../components/ModalForm";
+import { createCampaignFormField } from "../utils/campaignForm";
 
 const fakeData = [];
 
 const CampaignPage = () => {
+  const [formState, setFormState] = useState({
+    create: false,
+    edit: false,
+    delete: false,
+  });
+
+  const handleOpenForm = (name) => {
+    setFormState({ ...formState, [name]: true });
+  };
+
+  const handleCloseForm = (name) => {
+    setFormState({ ...formState, [name]: false });
+  };
+
   const handleSearchChange = async (e) => {};
+
+  const handleCreateCampaign = async()=>{}
 
   return (
     <div className="page-container">
+      <ModalForm
+        setVisible={() => handleCloseForm("create")}
+        visible={formState.create}
+        title={"Create Campaign"}
+        customFunction={handleCreateCampaign}
+        formField={createCampaignFormField}
+      />
       <div className="control-bar">
         <div className="left-control">
           <input
@@ -17,7 +43,7 @@ const CampaignPage = () => {
         </div>
         <div className="right-control">
           <DownloadCSVButton />
-          <button type="button">Create Campaign</button>
+          <button type="button" onClick={() => handleOpenForm("create")}>Create Campaign</button>
         </div>
       </div>
       <table>
@@ -34,7 +60,7 @@ const CampaignPage = () => {
           </tr>
         </thead>
         <tbody>
-          {fakeData.map((user, index) => {
+          {/* {fakeData.map((user, index) => {
             return (
               <tr key={index}>
                 <td>{user.id}</td>
@@ -61,7 +87,7 @@ const CampaignPage = () => {
                 </td>
               </tr>
             );
-          })}
+          })} */}
         </tbody>
       </table>
     </div>
