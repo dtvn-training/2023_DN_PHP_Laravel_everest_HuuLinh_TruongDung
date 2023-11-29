@@ -15,11 +15,13 @@ const Sidebar = () => {
     <div className="sidebar-container">
       <div className="info-container">
         <div className="avatar"></div>
-        <h3>{data.name}</h3>
+        <h3>{data.first_name + " " + data.last_name}</h3>
       </div>
       <div className="nav-bar">
         {urls.map((url, i) => (
-          <NavLink to={url.path} key={i}>{url.label}</NavLink>
+          <NavLink to={url.path} key={i}>
+            {url.label}
+          </NavLink>
         ))}
       </div>
     </div>

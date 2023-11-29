@@ -62,7 +62,7 @@ const AccountPage = () => {
     setFormState({ ...formState, [name]: true });
   };
 
-  const closeOpenForm = (name) => {
+  const handleCloseForm = (name) => {
     setFormState({ ...formState, [name]: false });
   };
 
@@ -98,54 +98,55 @@ const AccountPage = () => {
       try {
         const res = await api.post("api/user/create", data);
         toast.success(res.data.message);
-        handleOpenForm("create");
+        handleCloseForm("create");
         fetchUser();
       } catch (error) {
-        toast.error(error.message);
+        throw error;
       }
     } else {
-      toast.error("Confirm password does not match");
+      throw new Error("Confirm password does not match");
     }
   };
 
   const handleEditAccount = async (data) => {
-    try {
-      const res = await api.post(
-        `api/user/update/${pageState.currentUser.id}`,
-        data
-      );
-      toast.success(res.data.message);
-      handleOpenForm("edit");
-      fetchUser();
-    } catch (error) {
-      toast.error(error.message);
+    if (data.email === pageState.currentUser.email) {
+      try {
+        delete data.email;
+        const res = await api.post(
+          `api/user/update/${pageState.currentUser.id}`,
+          data
+        );
+        toast.success(res.data.message);
+        handleCloseForm("edit");
+        fetchUser();
+      } catch (error) {
+        throw error;
+      }
     }
   };
 
   const handleDeleteAccount = async () => {
     try {
-      const res = await api.get(
-        `api/user/delete/${pageState.currentUser.id}`
-      );
+      const res = await api.get(`api/user/delete/${pageState.currentUser.id}`);
       toast.success(res.data.message);
-      handleOpenForm("delete");
+      handleCloseForm("delete");
       fetchUser();
     } catch (error) {
-      toast.error(error.message);
+      throw error;
     }
   };
 
   return (
     <div className="account-page-container">
       <ModalForm
-        setVisible={() => closeOpenForm("create")}
+        setVisible={() => handleCloseForm("create")}
         visible={formState.create}
         title={"Create Account"}
         customFunction={handleCreateAccount}
         formField={createUserFormField}
       />
       <ModalForm
-        setVisible={() => closeOpenForm("edit")}
+        setVisible={() => handleCloseForm("edit")}
         visible={formState.edit}
         title={"Edit Account"}
         customFunction={handleEditAccount}
@@ -153,7 +154,7 @@ const AccountPage = () => {
         defaultFormValue={pageState.currentUser}
       />
       <DeleteModal
-        setVisible={() => closeOpenForm("delete")}
+        setVisible={() => handleCloseForm("delete")}
         visible={formState.delete}
         title={"Delete warning"}
         customFunction={handleDeleteAccount}
@@ -216,7 +217,7 @@ const AccountPage = () => {
           })}
         </tbody>
       </table>
-      <Pagination totalPages={pageState.resData.total} />
+      <Pagination totalPages={pageState.resData.last_page} />
     </div>
   );
 };

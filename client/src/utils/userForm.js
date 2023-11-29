@@ -24,6 +24,7 @@ const createUserFormField = [
         label: "Role",
         type: "select",
         options: [
+          { label: "--Select role--"},
           { label: "DAC", value: "1" },
           { label: "Advertiser", value: "2" },
           { label: "Admin", value: "3" },
