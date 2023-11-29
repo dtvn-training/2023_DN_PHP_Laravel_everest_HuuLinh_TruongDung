@@ -49,6 +49,9 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function campaigns(){
+        return $this->hasOne(Campaign::class, 'user_update');
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();

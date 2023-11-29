@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CampaignController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,4 +32,8 @@ Route::group(['middleware'=>'api', 'prefix' => 'user'],function($router){
     Route::post('/create',[UserController::class,'addUser']);
     Route::post('/update/{id}',[UserController::class,'editUser']);
     Route::get('/delete/{id}',[UserController::class,'deleteUser']);
+
+    Route::get('/getCampagin',[CampaignController::class,'index']);
+    Route::post('/createCampagin',[CampaignController::class,'createCampagin']);
+
 });
