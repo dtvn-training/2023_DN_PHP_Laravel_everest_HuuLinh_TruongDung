@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/scss/pages/LoginPage.scss";
-import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { validateLoginForm } from "../validators";
 import api from "../api/axios";
@@ -14,7 +13,26 @@ const LoginPage = () => {
   const [info, setInfo] = useState(initState);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getProfile = async () => {
+      setIsAuthLoading(true);
+      try {
+        const res = await api.get("/api/auth/profile");
+        if (res.data.id) {
+          navigate("/");
+        }
+      } catch (e) {
+        console.error(e);
+        setIsAuthLoading(false);
+      }
+      setIsAuthLoading(false);
+    };
+    getProfile();
+  }, []);
+
   const handleChange = (e) => {
     setInfo({
       ...info,
@@ -28,7 +46,6 @@ const LoginPage = () => {
     const { emailError, passwordError } = validateLoginForm(email, password);
     if (emailError === "" && passwordError === "") {
       try {
-        api;
         const res = await api.post("/api/auth/login", { email, password });
         localStorage.setItem(
           "accessToken",
@@ -49,9 +66,11 @@ const LoginPage = () => {
     }
     setIsLoading(false);
   };
-  
-  return (
-    <form method="POST" onSubmit={handleSubmit}>
+
+  return isAuthLoading ? (
+    <h1>Loading...</h1>
+  ) : (
+    <form method="POST" onSubmit={handleSubmit} className="login-form">
       <h1>WELCOME</h1>
       <input
         value={info.email}

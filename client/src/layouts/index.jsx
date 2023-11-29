@@ -3,7 +3,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { profileReducer } from "../redux/slices/ProfileSlice";
 
 const DefaultLayout = ({ children }) => {
@@ -14,20 +14,15 @@ const DefaultLayout = ({ children }) => {
   useEffect(() => {
     const getProfile = async () => {
       setIsloading(true);
-      const accessToken = localStorage.getItem("accessToken");
-      if (accessToken) {
-        try {
-          const res = await api.get("/api/auth/profile");
-          if (res.data.id) {
-            dispatch(profileReducer.actions.getProfile(res.data));
-          } else {
-            navigate("/login");
-          }
-        } catch (e) {
-          console.error(e);
+      try {
+        const res = await api.get("/api/auth/profile");
+        if (res.data.id) {
+          dispatch(profileReducer.actions.getProfile(res.data));
+        } else {
           navigate("/login");
         }
-      } else {
+      } catch (e) {
+        console.error(e);
         navigate("/login");
       }
       setIsloading(false);
@@ -44,7 +39,7 @@ const DefaultLayout = ({ children }) => {
           <Header />
           <div style={{ display: "flex", flex: 1 }}>
             <Sidebar />
-            <div style={{ flex: 1 }}>{children}</div>
+            <div style={{ flex: 1, padding: 40   }}>{children}</div>
           </div>
         </>
       )}

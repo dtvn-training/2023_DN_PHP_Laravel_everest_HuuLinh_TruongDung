@@ -1,0 +1,18 @@
+@import "../GlobalStyle.scss";
+
+.pagination-bar {
+  margin-top: 40px;
+    display: flex;
+    justify-content: center;
+  ul {
+    display: flex;
+    li {
+      a {
+        padding: 10px;
+        cursor: pointer;
+        color: rgb(0, 151, 211);
+        font-size: 16px;
+      }
+    }
+  }
+}

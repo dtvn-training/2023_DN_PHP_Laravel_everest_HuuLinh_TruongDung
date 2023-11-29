@@ -1,5 +1,7 @@
+@import '../GlobalStyle.scss';
+
 .header-container {
-    background: #468faf;
+    background: $main-bg-color;
     width: 100%;
     padding: 10px 20px;
     display: flex;
@@ -28,6 +30,7 @@
             padding: 10px;
             cursor: pointer;
             border: none;
+            background: #fff;
           }
         }
       }

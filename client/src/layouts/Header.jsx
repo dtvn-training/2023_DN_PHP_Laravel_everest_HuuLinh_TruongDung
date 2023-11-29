@@ -1,24 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import "../assets/scss/layouts/Header.scss";
-import axios from "../api/axios";
 import { useDispatch } from "react-redux";
-import { profileReducer } from "../redux/slices/ProfileSlice";
+import { logout } from "../redux/slices/ProfileSlice";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
-      try {
-        const res = await axios.post("/api/auth/logout", {});
-        alert(res.data.message);
-        localStorage.removeItem("accessToken");
-        dispatch(profileReducer.actions.resetProfile());
-        navigate("/login");
-      } catch (e) {
-        console.error(e);
-      }
-    
+    try {
+      dispatch(logout());
+      navigate("/login");
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (

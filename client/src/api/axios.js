@@ -31,9 +31,7 @@ function buildApi() {
       if (error.response && 401 === error.response.status) {
         let savedToken = getAccessToken();
         if (savedToken !== null) {
-          // localStorage.removeItem("userData");
           localStorage.removeItem("accessToken");
-          window.location.reload();
         }
       }
       return Promise.reject(error);

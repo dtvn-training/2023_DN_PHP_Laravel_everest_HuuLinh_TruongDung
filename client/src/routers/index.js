@@ -1,16 +1,15 @@
-import React from 'react';
-const HomePage = React.lazy(() => import("../pages/HomePage"));
+import React from "react";
+const DashboardPage = React.lazy(() => import("../pages/DashboardPage"));
 const LoginPage = React.lazy(() => import("../pages/LoginPage"));
-const RegisterPage = React.lazy(() => import("../pages/RegisterPage"));
-const UserManagementPage = React.lazy(() => import("../pages/UserManagementPage"));
+const AccountPage = React.lazy(() => import("../pages/AccountPage"));
+const CampaignPage = React.lazy(() => import("../pages/CampaignPage"));
 
-const publicRoutes = [
-  { path: "/register", component: RegisterPage },
-  { path: "/login", component: LoginPage },
-];
+const publicRoutes = [{ path: "/login", component: LoginPage }];
+
 const privateRoutes = [
-  { path: "/", component: HomePage },
-  { path: "/userManagement", component: UserManagementPage }
+  { path: "/", component: DashboardPage },
+  { path: "/account_managemet", component: AccountPage },
+  { path: "/campaign_management", component: CampaignPage },
 ];
 
 export { privateRoutes, publicRoutes };

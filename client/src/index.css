@@ -11,3 +11,16 @@
     flex-direction: column;
     width: auto;
 }
+button{
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+input{
+    padding: 10px;
+}
+li{
+    list-style-type: none;
+}

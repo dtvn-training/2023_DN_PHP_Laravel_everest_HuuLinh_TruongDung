@@ -27,7 +27,7 @@ export const validatePassword = (password) => {
 };
 export const validatePasswordConfirmation = (password, passwordConfirm) => {
   if (password !== passwordConfirm) {
-    return "Those passwords did not match. Try again.";
+    return "Confirm password does not match";
   } else {
     return "";
   }
@@ -60,5 +60,15 @@ export const validateLoginForm = (email, password) => {
   return {
     emailError,
     passwordError,
+  };
+};
+
+export const validateCreateAccountForm = (password, passwordConfirm) => {
+  const passwordConfirmError = validatePasswordConfirmation(
+    password,
+    passwordConfirm
+  );
+  return {
+    passwordConfirmError,
   };
 };
