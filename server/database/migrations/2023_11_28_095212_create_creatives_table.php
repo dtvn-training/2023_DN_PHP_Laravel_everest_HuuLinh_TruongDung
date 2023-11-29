@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('creatives', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->binary('preview_image');
+            $table->string('creative_name');
+            $table->string('preview_image');
             $table->string('final_url');
+            $table->string('description');
             $table->bigInteger('id_campaign');
             $table->timestamps();
         });

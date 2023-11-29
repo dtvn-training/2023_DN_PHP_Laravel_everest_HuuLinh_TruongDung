@@ -2,16 +2,23 @@
 
 .pagination-bar {
   margin-top: 40px;
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
   ul {
     display: flex;
     li {
+      padding: 10px 0;
       a {
         padding: 10px;
         cursor: pointer;
-        color: rgb(0, 151, 211);
+        color: $main-bg-color;
         font-size: 16px;
+      }
+      &.active {
+        background: $main-bg-color;
+        a {
+          color: #fff;
+        }
       }
     }
   }

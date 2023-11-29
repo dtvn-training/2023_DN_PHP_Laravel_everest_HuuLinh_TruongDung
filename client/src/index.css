@@ -1,26 +1,29 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.container{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    width: auto;
+html {
+  overflow-y: scroll;
 }
-button{
-    cursor: pointer;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
+.container {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: auto;
 }
-input{
-    padding: 10px;
+button {
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
 }
-li{
-    list-style-type: none;
+input {
+  padding: 10px;
+}
+li {
+  list-style-type: none;
 }

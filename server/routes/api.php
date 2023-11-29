@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CampaignController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,9 +27,28 @@ Route::group(['middleware'=>'api', 'prefix' => 'auth'],function($router){
     Route::post('/refresh',[AuthController::class,'refreshToken']);
 });
 
-Route::group(['middleware'=>'api', 'prefix' => 'user'],function($router){
+// Route::group(['middleware'=>'api', 'prefix' => 'user'],function($router){
+//     Route::post('/create',[UserController::class,'createUser']);
+// });
+
+// ADMIN
+Route::group(['middleware' => ['api', 'role_id:2,3'], 'prefix' => 'user'], function ($router) {
     Route::get('/get',[UserController::class,'index']);
-    Route::post('/create',[UserController::class,'addUser']);
+    Route::post('/create',[UserController::class,'createUser']);
     Route::post('/update/{id}',[UserController::class,'editUser']);
     Route::get('/delete/{id}',[UserController::class,'deleteUser']);
 });
+Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], function ($router) {
+    Route::get('/get',[CampaignController::class,'index']);
+    Route::post('/create',[CampaignController::class,'createCampaign']);
+    Route::post('/update/{id}',[CampaignController::class,'updateCampaign']);
+    Route::get('/delete/{id}',[CampaignController::class,'deleteCampaign']);
+});
+
+// DAC Account
+// Route::group(['middleware' => ['api', 'role_id:2'], 'prefix' => 'user'], function ($router) {
+    
+// };
+
+// Advertiser
+// Route::group(['middleware' => ['api', 'role_id:1'], 'prefix' => 'user'], function ($router) {

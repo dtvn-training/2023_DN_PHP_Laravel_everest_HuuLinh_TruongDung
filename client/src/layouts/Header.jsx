@@ -25,7 +25,9 @@ const Header = () => {
         <h1>LOGO</h1>
       </div>
       <div className="right">
-        <div className="img-container"></div>
+        <div className="img-container">
+          <img src="/assets/img/OIP.jpg" />
+        </div>
         <div className="dropdown-contents">
           <button type="button" onClick={() => handleLogout()}>
             Log out

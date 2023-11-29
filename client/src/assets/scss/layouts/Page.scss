@@ -1,0 +1,83 @@
+@import "../GlobalStyle.scss";
+
+.page-container {
+  width: calc(100vw - 300px);
+  padding: 40px;
+  .control-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .left-control {
+      input {
+        border: none;
+        background: #ccc;
+      }
+    }
+    .right-control {
+      display: flex;
+      button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        background: $main-bg-color;
+        color: $light-text-color;
+      }
+    }
+  }
+  .table-container {
+    overflow-x: auto;
+    width: 100%;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      thead {
+        th {
+          color: $light-text-color;
+          background: $main-bg-color;
+          border: 1px solid $main-border-color;
+          padding: 10px;
+          text-decoration: underline;
+        }
+      }
+      tbody {
+        td {
+          border: 1px solid $main-border-color;
+          padding: 10px;
+          text-align: center;
+          .edit-btn {
+            background: $edit-btn-color;
+            color: $light-text-color;
+            margin-right: 10px;
+          }
+          .delete-btn {
+            background: $delete-btn-color;
+            color: $light-text-color;
+          }
+          .double-item-cell {
+            display: flex;
+            align-items: center;
+            .img-container {
+              width: 40px;
+              height: 40px;
+              margin-right: 10px;
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+              }
+            }
+          }
+          &.no-wrap {
+            white-space: nowrap;
+          }
+          &.break-word {
+            overflow-wrap: break-word;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-const createUserFormField = [
+let createUserFormField = [
   {
     section_title: "Details",
     contents: [
@@ -54,7 +54,7 @@ const createUserFormField = [
   },
 ];
 
-const editUserFormField = [
+let editUserFormField = [
   {
     section_title: "Details",
     contents: [
@@ -82,13 +82,13 @@ const editUserFormField = [
       {
         label: "Role",
         type: "select",
-        default: "",
         options: [
           { label: "DAC", value: "1" },
           { label: "Advertiser", value: "2" },
           { label: "Admin", value: "3" },
         ],
         name: "role_id",
+        default: "",
       },
       {
         label: "Address",

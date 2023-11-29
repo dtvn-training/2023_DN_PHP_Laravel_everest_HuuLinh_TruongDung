@@ -64,11 +64,11 @@ export const validateLoginForm = (email, password) => {
 };
 
 export const validateCreateAccountForm = (password, passwordConfirm) => {
-  const passwordConfirmError = validatePasswordConfirmation(
-    password,
-    passwordConfirm
-  );
-  return {
-    passwordConfirmError,
-  };
+  const errors = [];
+  const passwordConfirmError = validatePasswordConfirmation(password, passwordConfirm);
+  
+  if (passwordConfirmError) {
+    errors.push(passwordConfirmError);
+  }
+  return errors;
 };
