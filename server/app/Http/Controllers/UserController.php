@@ -39,7 +39,8 @@ class UserController extends Controller
             return response()->json("User not found", 404);
         }
         $user->update($request->all());
-        return response()->json("Update user successfully");
+        return response()->json(['message' => 'Update user successfully']);
+
     }
     public function addUser(Request $request)
     {
@@ -58,9 +59,7 @@ class UserController extends Controller
         }
         $newUser = User::create($request->all());
         $newUser->save();
-        return response()->json(
-            'Create user successfully'
-        );
+        return response()->json(['message' => 'Create user successfully']);
     }
     public function index()
     {
