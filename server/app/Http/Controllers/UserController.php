@@ -67,11 +67,15 @@ class UserController extends Controller
         $newUser->save();
         return response()->json(['message' => 'Create user successfully']);
     }
-    public function index()
+    public function index(Request $request)
     {
-        $user = User::paginate(5);
-        return response()->json(
-            [$user]
-        );
+        $searchEmail = $request->input('search_email');
+        $query = User::query();
+        if ($searchEmail) {
+            $query->where('email', 'like', "%$searchEmail%");
+        }
+        $users = $query->paginate(5);
+
+        return response()->json([$users]);
     }
 }

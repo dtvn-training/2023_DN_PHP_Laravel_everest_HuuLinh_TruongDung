@@ -38,7 +38,14 @@ const AccountPage = () => {
     fetchUser();
   }, []);
 
-  const handleSearchChange = async (e) => {};
+  const handleSearchChange = async (e) => {
+    try {
+      const res = await api.get(`api/user/get?search_email=${e.target.value}`);
+      handleChange("resData", res.data[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getRole = (role_id) => {
     switch (role_id) {
@@ -110,18 +117,18 @@ const AccountPage = () => {
 
   const handleEditAccount = async (data) => {
     if (data.email === pageState.currentUser.email) {
-      try {
-        delete data.email;
-        const res = await api.post(
-          `api/user/update/${pageState.currentUser.id}`,
-          data
-        );
-        toast.success(res.data.message);
-        handleCloseForm("edit");
-        fetchUser();
-      } catch (error) {
-        throw error;
-      }
+      delete data.email;
+    }
+    try {
+      const res = await api.post(
+        `api/user/update/${pageState.currentUser.id}`,
+        data
+      );
+      toast.success(res.data.message);
+      handleCloseForm("edit");
+      fetchUser();
+    } catch (error) {
+      throw error;
     }
   };
 
