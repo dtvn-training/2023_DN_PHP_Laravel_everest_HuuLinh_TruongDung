@@ -24,7 +24,7 @@ class UserController extends Controller
     public function editUser(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email',
             'first_name' => 'required',
             'last_name' => 'required',
             'role_id' => 'required',
