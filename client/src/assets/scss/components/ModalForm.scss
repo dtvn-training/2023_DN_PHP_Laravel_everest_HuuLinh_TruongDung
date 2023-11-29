@@ -59,7 +59,8 @@
   .rodal {
     .rodal-dialog {
       width: 700px !important;
-      height: 650px !important;
+      height: fit-content !important;
+      max-height: 650px !important;
       padding: 0 !important;
       overflow-y: auto;
     }
