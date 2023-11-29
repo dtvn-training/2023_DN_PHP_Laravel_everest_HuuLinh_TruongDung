@@ -34,6 +34,10 @@
         border-bottom: 1px solid #fff;
         font-weight: bold;
         font-size: 18px;
+        &.link-active{
+          background: #fff;
+          color: $main-bg-color;
+        }
       }
     }
   }

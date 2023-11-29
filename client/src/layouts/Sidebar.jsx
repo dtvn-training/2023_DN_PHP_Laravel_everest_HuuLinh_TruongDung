@@ -19,7 +19,12 @@ const Sidebar = () => {
       </div>
       <div className="nav-bar">
         {urls.map((url, i) => (
-          <NavLink to={url.path} key={i}>
+          <NavLink
+            to={url.path}
+            key={i}
+            active
+            className={({ isActive }) => (isActive ? "link-active" : "link")}
+          >
             {url.label}
           </NavLink>
         ))}
