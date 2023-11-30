@@ -48,6 +48,23 @@
           background: $delete-btn-color;
           color: $light-text-color;
         }
+        .double-item-cell {
+          display: flex;
+          align-items: center;
+          .img-container {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+        }
+        &.no-wrap {
+          white-space: nowrap;
+        }
       }
     }
   }

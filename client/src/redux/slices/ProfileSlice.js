@@ -15,6 +15,7 @@ export const logout = createAsyncThunk('profile/logout', async (_, { dispatch })
     const res = await api.post("/api/auth/logout", {});
     alert(res.data.message);
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     dispatch(profileReducer.actions.resetProfile());
   } catch (e) {
     console.error(e);

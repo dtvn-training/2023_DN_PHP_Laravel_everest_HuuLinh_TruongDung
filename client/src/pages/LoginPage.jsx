@@ -51,6 +51,10 @@ const LoginPage = () => {
           "accessToken",
           JSON.stringify(res.data.access_token)
         );
+        localStorage.setItem(
+          "refreshToken",
+          JSON.stringify(res.data.refresh_token)
+        );
         navigate("/");
         setInfo(initState);
         setError("");

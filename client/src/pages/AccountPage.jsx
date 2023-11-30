@@ -6,8 +6,6 @@ import { toast } from "react-toastify";
 import { createUserFormField, editUserFormField } from "../utils/userForm";
 import DeleteModal from "../components/DeleteModal";
 import DownloadCSVButton from "../components/DownLoadCSVButton";
-import { useSelector } from "react-redux";
-import { profile } from "../redux/selector";
 import { useNavigate } from "react-router-dom";
 
 const initState = {
@@ -37,7 +35,6 @@ const AccountPage = () => {
     edit: false,
     delete: false,
   });
-  const userProfile = useSelector(profile);
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -1,11 +1,10 @@
 @import "../GlobalStyle.scss";
 
 .sidebar-container {
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
   background: $main-bg-color;
-  width: fit-content;
   border-top: 1px solid #fff;
   .info-container {
     display: flex;

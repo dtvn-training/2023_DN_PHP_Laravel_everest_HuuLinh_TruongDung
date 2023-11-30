@@ -30,7 +30,7 @@ const ModalForm = ({
     if (e.target.files[0]) {
       setFormData({
         ...formData,
-        [e.target.name]: e.target.files[0],
+        [e.target.name]: URL.createObjectURL(e.target.files[0]),
       });
     }
   };
@@ -47,8 +47,8 @@ const ModalForm = ({
 
   const handleCloseForm = () => {
     setVisible(false);
-    formRef.current.reset();
     setFormData(defaultFormValue || {});
+    formRef.current.reset();
   };
   
   return (
@@ -58,7 +58,35 @@ const ModalForm = ({
           <h2>{title}</h2>
           <form onSubmit={handleFormSubmit} ref={formRef}>
             {formField.map((d, i) => {
-              return (
+              return d.type === "time_range" ? (
+                <div className="section-item" key={i}>
+                  <div className="section-header">{d.section_title}</div>
+                  <div className="input-field">
+                    <label className="form-label">
+                      {d.section_title + ":"}
+                    </label>
+                    <div className="datetime-field">
+                      {d.contents.map((content, i) => {
+                        return (
+                          <div className="datetime-item" key={i}>
+                            <label htmlFor="">{content.label}</label>
+                            <input
+                              type={content.type}
+                              name={content.name}
+                              value={
+                                formData && formData[content.name] !== undefined
+                                  ? formData[content.name]
+                                  : content.default
+                              }
+                              onChange={handleFieldChange}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ) : (
                 <div className="section-item" key={i}>
                   <div className="section-header">{d.section_title}</div>
                   {d.contents.map((content, index) => {
@@ -97,26 +125,11 @@ const ModalForm = ({
                             <img
                               src={
                                 formData && formData[content.name] !== undefined
-                                  ? URL.createObjectURL(formData[content.name])
+                                  ? formData[content.name]
                                   : content.default
                               }
                             />
                             <label htmlFor={content.name}>Upload image</label>
-                          </div>
-                        ) : content.type === "datetime-local" ? (
-                          <div className="datetime-field">
-                            <label htmlFor="">Start time:</label>
-                            <input
-                              type={content.type}
-                              name="start_date"
-                              onChange={handleFieldChange}
-                            />
-                            <label htmlFor="">End time:</label>
-                            <input
-                              type={content.type}
-                              name="end_date"
-                              onChange={handleFieldChange}
-                            />
                           </div>
                         ) : (
                           <input

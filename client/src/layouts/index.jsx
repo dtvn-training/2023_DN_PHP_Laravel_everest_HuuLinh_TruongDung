@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { profileReducer } from "../redux/slices/ProfileSlice";
 import "../assets/scss/layouts/Page.scss";
+import Banner from "../components/Banner";
 
 const DefaultLayout = ({ children }) => {
   const [isLoading, setIsloading] = useState(true);
@@ -37,6 +38,7 @@ const DefaultLayout = ({ children }) => {
         <h1>Loading...</h1>
       ) : (
         <>
+          <Banner />
           <Header />
           <div style={{ display: "flex", flex: 1 }}>
             <Sidebar />

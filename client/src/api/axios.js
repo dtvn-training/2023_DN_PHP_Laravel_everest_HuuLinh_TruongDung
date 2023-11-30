@@ -9,6 +9,15 @@ const getAccessToken = () => {
   return token;
 };
 
+const getRefreshToken = () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+  let token = "";
+  if (refreshToken) {
+    token = refreshToken.replace(/"/g, "");
+  }
+  return token;
+};
+
 function buildApi() {
   const instance = axios.create({
     baseURL: import.meta.env.VITE_BACK_END_URL,
@@ -27,12 +36,30 @@ function buildApi() {
     (response) => {
       return response;
     },
-    (error) => {
-      if (error.response && 401 === error.response.status) {
-        let savedToken = getAccessToken();
-        if (savedToken !== null) {
-          localStorage.removeItem("accessToken");
+    async (error) => {
+      const originalRequest = error.config;
+      if (
+        error.response &&
+        error.response.status === 401 &&
+        !originalRequest._retry
+      ) {
+        originalRequest._retry = true;
+        const response = await axios.post(
+          import.meta.env.VITE_BACK_END_URL + "/api/auth/refresh",
+          `refresh_token=${getRefreshToken()}`,
+          {
+            headers: {
+              Authorization: `Bearer ${getAccessToken()}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+        if (response.data && response.data.access_token) {
+          localStorage.setItem("accessToken", response.data.access_token);
+          originalRequest.headers["Authorization"] = "Bearer " + newToken;
+          return instance(originalRequest);
         }
+        localStorage.removeItem("accessToken");
       }
       return Promise.reject(error);
     }

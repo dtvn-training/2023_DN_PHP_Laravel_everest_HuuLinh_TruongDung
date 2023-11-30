@@ -65,26 +65,30 @@
               font-size: 14px;
               font-weight: bold;
             }
-            &:hover{
-              label{
+            &:hover {
+              label {
                 display: block;
               }
             }
           }
-          .datetime-field{
+          .datetime-field {
             width: 514px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            label{
-              font-size: 14px;
-              font-weight: bold;
-              margin:0 10px;
-            }
-            input{
-              border: none;
-              border-bottom: 1px solid $main-border-color;
-              outline: none;
+            .datetime-item {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              width: 50%;
+              label {
+                font-size: 14px;
+                font-weight: bold;
+                margin: 0 10px;
+              }
+              input {
+                border: none;
+                border-bottom: 1px solid $main-border-color;
+                outline: none;
+              }
             }
           }
         }
