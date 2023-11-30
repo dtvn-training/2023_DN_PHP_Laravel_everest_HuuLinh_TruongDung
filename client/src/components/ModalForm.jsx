@@ -26,21 +26,34 @@ const ModalForm = ({
     });
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files[0]) {
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.files[0],
+      });
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
       await customFunction(formData);
-      setFormData(defaultFormValue || {});
-      formRef.current.reset();
-      setVisible(false);
+      handleCloseForm();
     } catch (error) {
       toast.error(error.message);
     }
   };
 
+  const handleCloseForm = () => {
+    setVisible(false);
+    formRef.current.reset();
+    setFormData(defaultFormValue || {});
+  };
+  
   return (
     <div className="form-model">
-      <Rodal visible={visible} onClose={() => setVisible(false)}>
+      <Rodal visible={visible} onClose={handleCloseForm}>
         <div className="modal-container">
           <h2>{title}</h2>
           <form onSubmit={handleFormSubmit} ref={formRef}>
@@ -51,7 +64,9 @@ const ModalForm = ({
                   {d.contents.map((content, index) => {
                     return (
                       <div className="input-field" key={index}>
-                        <label>{content.label + ":"}</label>
+                        <label className="form-label">
+                          {content.label + ":"}
+                        </label>
                         {content.type === "select" ? (
                           <select
                             onChange={handleFieldChange}
@@ -69,6 +84,40 @@ const ModalForm = ({
                               </option>
                             ))}
                           </select>
+                        ) : content.type === "image" ? (
+                          <div className="img-container">
+                            <input
+                              type="file"
+                              id={content.name}
+                              name={content.name}
+                              required
+                              accept=".jpg,.png"
+                              onChange={handleFileChange}
+                            />
+                            <img
+                              src={
+                                formData && formData[content.name] !== undefined
+                                  ? URL.createObjectURL(formData[content.name])
+                                  : content.default
+                              }
+                            />
+                            <label htmlFor={content.name}>Upload image</label>
+                          </div>
+                        ) : content.type === "datetime-local" ? (
+                          <div className="datetime-field">
+                            <label htmlFor="">Start time:</label>
+                            <input
+                              type={content.type}
+                              name="start_date"
+                              onChange={handleFieldChange}
+                            />
+                            <label htmlFor="">End time:</label>
+                            <input
+                              type={content.type}
+                              name="end_date"
+                              onChange={handleFieldChange}
+                            />
+                          </div>
                         ) : (
                           <input
                             type={content.type}
@@ -89,7 +138,7 @@ const ModalForm = ({
               );
             })}
             <div className="modal-control-bar">
-              <button type="button" onClick={() => setVisible(false)}>
+              <button type="button" onClick={handleCloseForm}>
                 Cancel
               </button>
               <button type="submit" className="save-btn">

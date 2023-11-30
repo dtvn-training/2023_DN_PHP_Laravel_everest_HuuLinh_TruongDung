@@ -54,7 +54,7 @@ const CampaignPage = () => {
             <th>Used Amount</th>
             <th>Usage Rate</th>
             <th>Budget</th>
-            <th>Start data</th>
+            <th>Start date</th>
             <th>End Date</th>
             <th>Actions</th>
           </tr>

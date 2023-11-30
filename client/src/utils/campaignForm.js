@@ -25,7 +25,7 @@ let createCampaignFormField = [
     contents: [
       {
         label: "Schedule",
-        type: "date",
+        type: "datetime-local",
         name: "start_date",
       }
     ],
@@ -42,7 +42,7 @@ let createCampaignFormField = [
     ],
   },
   {
-    section_title: "Budget",
+    section_title: "Bidding",
     contents: [
       {
         label: "Bidding",
@@ -66,6 +66,12 @@ let createCampaignFormField = [
         type: "text",
         placeholder: "",
         name: "description",
+      },
+      {
+        label: "Creative preview",
+        type: "image",
+        placeholder: "",
+        name: "creative_preview",
       },
       {
         label: "Final URL",

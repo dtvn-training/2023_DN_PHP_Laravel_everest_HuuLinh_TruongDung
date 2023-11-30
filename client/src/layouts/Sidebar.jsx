@@ -11,10 +11,13 @@ const urls = [
 
 const Sidebar = () => {
   const data = useSelector(profile);
+
   return (
     <div className="sidebar-container">
       <div className="info-container">
-        <div className="avatar"></div>
+        <div className="avatar">
+          <img src="/assets/img/OIP.jpg"/>
+        </div>
         <h3>{data.first_name + " " + data.last_name}</h3>
       </div>
       <div className="nav-bar">
@@ -22,7 +25,6 @@ const Sidebar = () => {
           <NavLink
             to={url.path}
             key={i}
-            active
             className={({ isActive }) => (isActive ? "link-active" : "link")}
           >
             {url.label}
