@@ -41,7 +41,8 @@ function buildApi() {
       if (
         error.response &&
         error.response.status === 401 &&
-        !originalRequest._retry
+        !originalRequest._retry &&
+        getRefreshToken()
       ) {
         originalRequest._retry = true;
         const response = await axios.post(
