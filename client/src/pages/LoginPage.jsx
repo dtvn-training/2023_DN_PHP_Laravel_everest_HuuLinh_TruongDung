@@ -60,7 +60,7 @@ const LoginPage = () => {
         setError("");
       } catch (e) {
         if (e.response && e.response.status === 401) {
-          setError(e.response.data);
+          setError(e.response.data.message);
         } else {
           console.error(e);
         }
