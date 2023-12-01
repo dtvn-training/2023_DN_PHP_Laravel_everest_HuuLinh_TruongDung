@@ -22,11 +22,17 @@ let createCampaignFormField = [
   },
   {
     section_title: "Schedule",
+    type: "time_range",
     contents: [
       {
-        label: "Schedule",
+        label: "Start time",
         type: "datetime-local",
         name: "start_date",
+      },
+      {
+        label: "End time",
+        type: "datetime-local",
+        name: "end_date",
       },
     ],
   },
