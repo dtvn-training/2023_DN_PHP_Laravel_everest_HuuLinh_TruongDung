@@ -33,9 +33,9 @@ const initState = {
             name: "Vinamilk",
             description: "abc",
             creative_preview:
-              "https://automonkey.co/wp-content/uploads/2021/08/informing-about-products-through-ads.jpeg",
+              "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7",
             final_url:
-              "https://automonkey.co/wp-content/uploads/2021/08/informing-about-products-through-ads.jpeg",
+              "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7",
             id_campaign: 1,
             created_at: null,
             updated_at: null,
@@ -113,10 +113,10 @@ const CampaignPage = () => {
   });
 
   const handleChange = (name, value) => {
-    setPageState({
-      ...pageState,
+    setPageState((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
   const handleOpenForm = (name) => {
@@ -155,7 +155,6 @@ const CampaignPage = () => {
         }
       })
     );
-
     handleOpenForm("edit");
   };
 
@@ -182,13 +181,14 @@ const CampaignPage = () => {
         title={"Edit Campaign"}
         customFunction={handleEditCampaign}
         formField={pageState.localEditCampaignFormField}
+        defaultFormValue={pageState.currentCampaign}
       />
       <DeleteModal
         setVisible={() => handleCloseForm("delete")}
         visible={formState.delete}
-        title={"Delete warning"}
+        title={"Confirmation"}
         customFunction={handleDeleteCampaign}
-        message={"This will delete the campaign"}
+        message={"Please confirm that you want to delete the campaign"}
       />
       <div className="filter-bar">
         <label>Start time:</label>
@@ -231,7 +231,7 @@ const CampaignPage = () => {
                 <td>
                   <div className="double-item-cell">
                     <div className="img-container">
-                      <img src={campaign.creatives[0].final_url} alt="" />
+                      <img src={campaign.creatives[0].creative_preview} alt="" />
                     </div>
                     {campaign.name}
                   </div>

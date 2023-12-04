@@ -2,7 +2,6 @@ import Rodal from "rodal";
 import "rodal/lib/rodal.css";
 import "../assets/scss/components/ModalForm.scss";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
 
 const ModalForm = ({
   title,
@@ -13,6 +12,7 @@ const ModalForm = ({
   defaultFormValue,
 }) => {
   const [formData, setFormData] = useState(defaultFormValue || {});
+  const [error, setError] = useState(null);
   const formRef = useRef();
 
   useEffect(() => {
@@ -36,19 +36,28 @@ const ModalForm = ({
   };
 
   const handleFormSubmit = async (e) => {
+    setError(null);
     e.preventDefault();
     try {
       await customFunction(formData);
       handleCloseForm();
     } catch (error) {
-      toast.error(error.message);
+      if (error.response && error.response.status) {
+        let errors = error.response.data;
+        let firstKey = Object.keys(errors)[0];
+        let firstError = errors[firstKey][0];
+        setError(firstError);
+      } else {
+        setError(error.message);
+      }
     }
   };
 
   const handleCloseForm = () => {
     setVisible(false);
-    setFormData(defaultFormValue || {});
+    setFormData({});
     formRef.current.reset();
+    setError(null);
   };
   
   return (
@@ -150,6 +159,7 @@ const ModalForm = ({
                 </div>
               );
             })}
+            {error && <p className="error-message">{error}</p>}
             <div className="modal-control-bar">
               <button type="button" onClick={handleCloseForm}>
                 Cancel

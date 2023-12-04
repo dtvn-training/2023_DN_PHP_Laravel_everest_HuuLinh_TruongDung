@@ -1,12 +1,14 @@
 @import "../GlobalStyle.scss";
 
 .sidebar-container {
+  width: 300px;
   height: auto;
   display: flex;
   flex-direction: column;
   background: $main-bg-color;
   border-top: 1px solid #fff;
   .info-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,6 +26,10 @@
         height: 100%;
         border-radius: 50%;
       }
+    }
+    h3{
+      overflow-wrap: break-word;
+      max-width: 100%;
     }
   }
   .nav-bar {

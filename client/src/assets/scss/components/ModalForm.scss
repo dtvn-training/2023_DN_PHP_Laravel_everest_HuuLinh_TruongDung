@@ -93,6 +93,15 @@
           }
         }
       }
+      .error-message {
+        font-size: 14px;
+        color: #ff0000;
+        background: #ffb8b8;
+        padding: 10px;
+        margin: 0 40px;
+        border-radius: $main-border-radius;
+        border: 1px solid #ff0000;
+      }
       .modal-control-bar {
         margin-top: 20px;
         border-top: 1px solid $main-border-color;

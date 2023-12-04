@@ -19,14 +19,17 @@ const LoginPage = () => {
   useEffect(() => {
     const getProfile = async () => {
       setIsAuthLoading(true);
-      try {
-        const res = await api.get("/api/auth/profile");
-        if (res.data.id) {
-          navigate("/");
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        try {
+          const res = await api.get("/api/auth/profile");
+          if (res.data.id) {
+            navigate("/");
+          }
+        } catch (e) {
+          console.error(e);
+          setIsAuthLoading(false);
         }
-      } catch (e) {
-        console.error(e);
-        setIsAuthLoading(false);
       }
       setIsAuthLoading(false);
     };

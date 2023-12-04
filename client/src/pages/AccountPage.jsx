@@ -7,6 +7,7 @@ import { createUserFormField, editUserFormField } from "../utils/userForm";
 import DeleteModal from "../components/DeleteModal";
 import DownloadCSVButton from "../components/DownLoadCSVButton";
 import { useNavigate } from "react-router-dom";
+import { validateCreateAccountForm } from "../validators";
 
 const initState = {
   resData: {
@@ -41,13 +42,21 @@ const AccountPage = () => {
     fetchUser();
   }, [pageState.current_page]);
 
-  const handleSearchChange = async (e) => {
-    try {
-      const res = await api.get(`api/user/get?search_email=${e.target.value}`);
-      handleChange("resData", res.data[0]);
-    } catch (error) {
-      console.error(error);
-    }
+  let timeoutId = null;
+
+  const handleSearchChange = (e) => {
+    if (timeoutId) clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(async () => {
+      try {
+        const res = await api.get(
+          `api/user/get?search_email=${e.target.value}`
+        );
+        handleChange("resData", res.data[0]);
+      } catch (error) {
+        console.error(error);
+      }
+    }, 500);
   };
 
   const getRole = (role_id) => {
@@ -100,8 +109,8 @@ const AccountPage = () => {
       handleChange("resData", res.data[0]);
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        navigate('/')
-        toast.error(error.response.message);
+        navigate("/");
+        toast.error(error.response.data.message);
       } else {
         console.error(error);
       }
@@ -109,7 +118,11 @@ const AccountPage = () => {
   };
 
   const handleCreateAccount = async (data) => {
-    if (data.password === data.confirm_password) {
+    const error = validateCreateAccountForm(
+      data.password,
+      data.confirm_password
+    );
+    if (error.length === 0) {
       try {
         const res = await api.post("api/user/create", data);
         toast.success(res.data.message);
@@ -119,7 +132,7 @@ const AccountPage = () => {
         throw error;
       }
     } else {
-      throw new Error("Confirm password does not match");
+      throw new Error(error[0]);
     }
   };
 
@@ -208,12 +221,14 @@ const AccountPage = () => {
               return (
                 <tr key={index}>
                   <td>{user.id}</td>
-                  <td>{user.first_name + " " + user.last_name}</td>
+                  <td className="break-word">
+                    {user.first_name + " " + user.last_name}
+                  </td>
                   <td>{user.email}</td>
                   <td>{user.address}</td>
                   <td>{user.phone}</td>
                   <td>{getRole(user.role_id)}</td>
-                  <td>
+                  <td className="no-wrap">
                     <button
                       className="edit-btn"
                       type="button"

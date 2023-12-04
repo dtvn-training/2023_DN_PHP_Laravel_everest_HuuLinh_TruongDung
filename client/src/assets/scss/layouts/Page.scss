@@ -65,6 +65,10 @@
         &.no-wrap {
           white-space: nowrap;
         }
+        &.break-word{
+          overflow-wrap: break-word;
+          max-width: 100px;
+        }
       }
     }
   }
