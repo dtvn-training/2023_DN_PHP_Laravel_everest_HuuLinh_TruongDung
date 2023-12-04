@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function deleteUser($id)
@@ -50,7 +50,6 @@ class UserController extends Controller
 
     public function addUser(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
             'first_name' => 'required',
@@ -69,13 +68,21 @@ class UserController extends Controller
     }
     public function index(Request $request)
     {
-        $searchEmail = $request->input('search_email');
-        $query = User::query();
-        if ($searchEmail) {
-            $query->where('email', 'like', "%$searchEmail%");
-        }
-        $users = $query->paginate(5);
+        if (Auth::user()->role_id == 3) {
+            $searchEmail = $request->input('search_email');
+            $query = User::query();
+            if ($searchEmail) {
+                $query->where('email', 'like', "%$searchEmail%");
+            }
+            $users = $query->paginate(5);
 
-        return response()->json([$users]);
+            return response()->json([$users]);
+        }
+        else if (Auth::user()->role_id == 2){
+            return response(["message"=>"Unauthorized Admin, You are DAC Account"], 401);
+        }
+        else{
+            return response(["message"=>"Unauthorized Admin, You are Advertiser"], 401);
+        }
     }
 }

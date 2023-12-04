@@ -28,16 +28,16 @@ Route::group(['middleware'=>'api', 'prefix' => 'auth'],function($router){
 });
 
 // ADMIN
-Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'user'], function ($router) {
+Route::group(['middleware' => ['api', 'role_id:2,3'], 'prefix' => 'user'], function ($router) {
     Route::get('/get',[UserController::class,'index']);
     Route::post('/create',[UserController::class,'addUser']);
     Route::post('/update/{id}',[UserController::class,'editUser']);
     Route::get('/delete/{id}',[UserController::class,'deleteUser']);
-
-    Route::get('/getCampagin',[CampaignController::class,'index']);
-    Route::post('/createCampagin',[CampaignController::class,'createCampagin']);
-
 });
+// Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], function ($router) {
+//     Route::get('/getCampagin',[CampaignController::class,'index']);
+//     Route::post('/createCampagin',[CampaignController::class,'createCampagin']);
+// }
 
 // DAC Account
 // Route::group(['middleware' => ['api', 'role_id:2'], 'prefix' => 'user'], function ($router) {
