@@ -134,8 +134,8 @@ class CampaignController extends Controller
     {
         $campaigns = Campaign::with('creatives')->paginate(3);
 
-        return response()->json([
-            'campaigns' => $campaigns,
-        ]);
+        return response()->json(
+            $campaigns,
+        );
     }
 }

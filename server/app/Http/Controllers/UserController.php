@@ -76,7 +76,7 @@ class UserController extends Controller
             }
             $users = $query->paginate(3);
 
-            return response()->json([$users]);
+            return response()->json($users);
         }
         else if (Auth::user()->role_id == 2){
             return response(["message"=>"Unauthorized Admin, You are DAC Account"], 401);

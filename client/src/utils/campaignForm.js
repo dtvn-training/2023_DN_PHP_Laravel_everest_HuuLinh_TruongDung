@@ -12,7 +12,7 @@ let createCampaignFormField = [
         label: "User status",
         type: "select",
         options: [
-          { label: "--Select status--"},
+          { label: "--Select status--" },
           { label: "Active", value: "1" },
           { label: "Inactive", value: "0" },
         ],
@@ -97,7 +97,7 @@ let editCampaignFormField = [
         label: "Name",
         type: "text",
         placeholder: "name",
-        name: "name",
+        name: "campaign_name",
         default: "",
       },
       {
@@ -162,7 +162,7 @@ let editCampaignFormField = [
         label: "Title",
         type: "text",
         placeholder: "",
-        name: "name",
+        name: "creative_name",
         default: "",
       },
       {
@@ -176,7 +176,8 @@ let editCampaignFormField = [
         label: "Creative preview",
         type: "image",
         placeholder: "",
-        name: "creative_preview",
+        name: "preview_image",
+        default: "",
       },
       {
         label: "Final URL",

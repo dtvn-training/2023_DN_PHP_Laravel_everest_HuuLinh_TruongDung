@@ -9,97 +9,23 @@ import "../assets/scss/pages/CampainPage.scss";
 import Pagination from "../components/Pagination";
 import DeleteModal from "../components/DeleteModal";
 import api from "../api/axios";
+import { toast } from "react-toastify";
 
 const initState = {
   resData: {
-    current_page: 1,
-    data: [
-      {
-        id: 1,
-        campaign_name: "Quảng cáo 1",
-        status: 1,
-        used_amount: 10,
-        usage_rate: 0.5,
-        budget: 100,
-        bid_amount: 100000,
-        start_date: "2023-11-20 02:06:38",
-        end_date: "2023-11-20 02:06:38",
-        user_updated: 1,
-        delete_flag: 0,
-        created_at: null,
-        updated_at: null,
-        creatives: [
-          {
-            id: 1,
-            creative_name: "Vinamilk",
-            description: "abc",
-            creative_preview:
-              "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7",
-            final_url:
-              "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7",
-            id_campaign: 1,
-            created_at: null,
-            updated_at: null,
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: "Quảng cáo 2",
-        status: 0,
-        used_amount: 10,
-        usage_rate: 0.5,
-        budget: 100,
-        bid_amount: 90000,
-        start_date: "2023-11-20 02:06:38",
-        end_date: "2023-11-20 02:06:38",
-        user_updated: 1,
-        delete_flag: 0,
-        created_at: null,
-        updated_at: null,
-        creatives: [
-          {
-            id: 2,
-            name: "Cake",
-            description: "abcde",
-            creative_preview:
-              "https://automonkey.co/wp-content/uploads/2021/08/informing-about-products-through-ads.jpeg",
-            final_url:
-              "https://automonkey.co/wp-content/uploads/2021/08/informing-about-products-through-ads.jpeg",
-            id_campaign: 2,
-            created_at: null,
-            updated_at: null,
-          },
-        ],
-      },
-    ],
-    first_page_url: "http://127.0.0.1:8000/api/user/getCampaign?page=1",
-    from: 1,
-    last_page: 1,
-    last_page_url: "http://127.0.0.1:8000/api/user/getCampaign?page=1",
-    links: [
-      {
-        url: null,
-        label: "&laquo; Previous",
-        active: false,
-      },
-      {
-        url: "http://127.0.0.1:8000/api/user/getCampaign?page=1",
-        label: "1",
-        active: true,
-      },
-      {
-        url: null,
-        label: "Next &raquo;",
-        active: false,
-      },
-    ],
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: 0,
+    last_page: 0,
+    last_page_url: null,
+    links: [],
     next_page_url: null,
-    path: "http://127.0.0.1:8000/api/user/getCampaign",
-    per_page: 5,
+    path: null,
+    per_page: 0,
     prev_page_url: null,
-    to: 2,
-    total: 2,
+    to: 0,
+    total: 0,
   },
   current_page: 1,
   currentCampaign: {},
@@ -189,17 +115,26 @@ const CampaignPage = () => {
 
   const handleCreateCampaign = async (data) => {
     try {
+      data.preview_image =
+        "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7";
       const res = await api.post("api/campaign/create", data);
       toast.success(res.data.message);
       handleCloseForm("create");
-      fetchUser();
+      fetchCampaign();
     } catch (error) {
       throw error;
     }
   };
 
   const handleEditCampaign = async (data) => {
-    console.log(data);
+    try {
+      const res = await api.post(`api/campaign/update/${data.id}`, data);
+      toast.success(res.data.message);
+      handleCloseForm("edit");
+      fetchCampaign();
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleDeleteCampaign = async () => {
@@ -280,12 +215,11 @@ const CampaignPage = () => {
                 <td>
                   <div className="double-item-cell">
                     <div className="img-container">
-                      <img
-                        src={campaign.creatives[0].creative_preview}
-                        alt=""
-                      />
+                      {campaign.creatives.length > 0 && (
+                        <img src={campaign.creatives[0].preview_image} alt="" />
+                      )}
                     </div>
-                    {campaign.name}
+                    {campaign.campaign_name}
                   </div>
                 </td>
                 <td>
@@ -328,7 +262,7 @@ const CampaignPage = () => {
         </tbody>
       </table>
       <Pagination
-        totalPages={3}
+        totalPages={pageState.resData.last_page}
         setPage={handleChange}
         current_page={pageState.resData.current_page}
       />

@@ -113,7 +113,7 @@ const AccountPage = () => {
     handleChange("loading", true);
     try {
       const res = await api.get(`api/user/get?page=${pageState.current_page}`);
-      handleChange("resData", res.data[0]);
+      handleChange("resData", res.data);
     } catch (error) {
       if (error.response && error.response.status === 401) {
         navigate("/");
