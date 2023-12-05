@@ -28,7 +28,7 @@ class UserController extends Controller
             'email' => 'email|unique:users',
             'first_name' => 'required',
             'last_name' => 'required',
-            'role_id' => 'required',
+            'role_id' => 'required|exists:roles,id',
             'address' => 'required',
             'phone' => 'required',
         ]);
@@ -48,13 +48,13 @@ class UserController extends Controller
         return response()->json(['message' => 'Update user successfully']);
     }
 
-    public function addUser(Request $request)
+    public function createUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
             'first_name' => 'required',
             'last_name' => 'required',
-            'role_id' => 'required',
+            'role_id' => 'required|exists:roles,id',
             'address' => 'required',
             'phone' => 'required',
             'password' => 'required|min:6',
@@ -74,7 +74,7 @@ class UserController extends Controller
             if ($searchEmail) {
                 $query->where('email', 'like', "%$searchEmail%");
             }
-            $users = $query->paginate(5);
+            $users = $query->paginate(3);
 
             return response()->json([$users]);
         }

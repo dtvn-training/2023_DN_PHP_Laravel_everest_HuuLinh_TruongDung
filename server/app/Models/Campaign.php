@@ -11,7 +11,7 @@ class Campaign extends Model
     protected $primaryKey = 'id';
     public $timestamp = true;
     protected $fillable = [
-        'name',
+        'campaign_name',
         'status',
         'used_amount',
         'usage_rate',
@@ -19,7 +19,7 @@ class Campaign extends Model
         'bid_amount',
         'start_date',
         'end_date',
-        'user_update',
+        'user_updated',
         'delete_flag',
     ];
     public function creatives()
