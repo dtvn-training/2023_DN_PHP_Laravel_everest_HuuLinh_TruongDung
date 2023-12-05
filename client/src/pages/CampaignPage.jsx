@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DownloadCSVButton from "../components/DownLoadCSVButton";
 import ModalForm from "../components/ModalForm";
 import {
@@ -8,6 +8,7 @@ import {
 import "../assets/scss/pages/CampainPage.scss";
 import Pagination from "../components/Pagination";
 import DeleteModal from "../components/DeleteModal";
+import api from "../api/axios";
 
 const initState = {
   resData: {
@@ -15,7 +16,7 @@ const initState = {
     data: [
       {
         id: 1,
-        name: "Quảng cáo 1",
+        campaign_name: "Quảng cáo 1",
         status: 1,
         used_amount: 10,
         usage_rate: 0.5,
@@ -30,7 +31,7 @@ const initState = {
         creatives: [
           {
             id: 1,
-            name: "Vinamilk",
+            creative_name: "Vinamilk",
             description: "abc",
             creative_preview:
               "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7",
@@ -100,6 +101,7 @@ const initState = {
     to: 2,
     total: 2,
   },
+  current_page: 1,
   currentCampaign: {},
   localEditCampaignFormField: [...editCampaignFormField],
 };
@@ -111,6 +113,26 @@ const CampaignPage = () => {
     edit: false,
     delete: false,
   });
+
+  useEffect(() => {
+    fetchCampaign();
+  }, [pageState.current_page]);
+
+  const fetchCampaign = async () => {
+    try {
+      const res = await api.get(
+        `api/campaign/get?page=${pageState.current_page}`
+      );
+      handleChange("resData", res.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+        toast.error(error.response.data.message);
+      } else {
+        console.error(error);
+      }
+    }
+  };
 
   const handleChange = (name, value) => {
     setPageState((prevState) => ({
@@ -158,13 +180,40 @@ const CampaignPage = () => {
     handleOpenForm("edit");
   };
 
+  const handleOpenDeleteForm = (data) => {
+    handleChange("currentCampaign", data);
+    handleOpenForm("delete");
+  };
+
   const handleSearchChange = async (e) => {};
 
-  const handleCreateCampaign = async () => {};
+  const handleCreateCampaign = async (data) => {
+    try {
+      const res = await api.post("api/campaign/create", data);
+      toast.success(res.data.message);
+      handleCloseForm("create");
+      fetchUser();
+    } catch (error) {
+      throw error;
+    }
+  };
 
-  const handleEditCampaign = async () => {};
+  const handleEditCampaign = async (data) => {
+    console.log(data);
+  };
 
-  const handleDeleteCampaign = async () => {};
+  const handleDeleteCampaign = async () => {
+    try {
+      const res = await api.get(
+        `api/campaign/delete/${pageState.currentCampaign.id}`
+      );
+      toast.success(res.data.message);
+      handleCloseForm("delete");
+      fetchCampaign();
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <div className="page-container">
@@ -231,7 +280,10 @@ const CampaignPage = () => {
                 <td>
                   <div className="double-item-cell">
                     <div className="img-container">
-                      <img src={campaign.creatives[0].creative_preview} alt="" />
+                      <img
+                        src={campaign.creatives[0].creative_preview}
+                        alt=""
+                      />
                     </div>
                     {campaign.name}
                   </div>
@@ -265,7 +317,7 @@ const CampaignPage = () => {
                   <button
                     className="delete-btn"
                     type="button"
-                    onClick={() => handleOpenForm("delete")}
+                    onClick={() => handleOpenDeleteForm(campaign)}
                   >
                     Delete
                   </button>
@@ -275,7 +327,11 @@ const CampaignPage = () => {
           })}
         </tbody>
       </table>
-      <Pagination totalPages={3} />
+      <Pagination
+        totalPages={3}
+        setPage={handleChange}
+        current_page={pageState.resData.current_page}
+      />
     </div>
   );
 };

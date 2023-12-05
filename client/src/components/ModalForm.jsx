@@ -16,8 +16,10 @@ const ModalForm = ({
   const formRef = useRef();
 
   useEffect(() => {
-    setFormData(defaultFormValue);
-  }, [defaultFormValue]);
+    if (visible) {
+      setFormData(defaultFormValue || {});
+    }
+  }, [visible, defaultFormValue]);
 
   const handleFieldChange = (e) => {
     setFormData({
@@ -27,12 +29,12 @@ const ModalForm = ({
   };
 
   const handleFileChange = (e) => {
-    if (e.target.files[0]) {
-      setFormData({
-        ...formData,
-        [e.target.name]: URL.createObjectURL(e.target.files[0]),
-      });
-    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [e.target.name]: e.target.files[0]
+        ? URL.createObjectURL(e.target.files[0])
+        : null,
+    }));
   };
 
   const handleFormSubmit = async (e) => {
@@ -59,7 +61,7 @@ const ModalForm = ({
     formRef.current.reset();
     setError(null);
   };
-  
+
   return (
     <div className="form-model">
       <Rodal visible={visible} onClose={handleCloseForm}>
@@ -82,6 +84,7 @@ const ModalForm = ({
                             <input
                               type={content.type}
                               name={content.name}
+                              required
                               value={
                                 formData && formData[content.name] !== undefined
                                   ? formData[content.name]
@@ -127,7 +130,7 @@ const ModalForm = ({
                               type="file"
                               id={content.name}
                               name={content.name}
-                              required
+                              // required
                               accept=".jpg,.png"
                               onChange={handleFileChange}
                             />
@@ -138,7 +141,7 @@ const ModalForm = ({
                                   : content.default
                               }
                             />
-                            <label htmlFor={content.name}>Upload image</label>
+                            {/* <label htmlFor={content.name}>Upload image</label> */}
                           </div>
                         ) : (
                           <input

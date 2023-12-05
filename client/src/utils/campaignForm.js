@@ -6,13 +6,13 @@ let createCampaignFormField = [
         label: "Name",
         type: "text",
         placeholder: "name",
-        name: "name",
+        name: "campaign_name",
       },
       {
         label: "User status",
         type: "select",
-        default: 1,
         options: [
+          { label: "--Select status--"},
           { label: "Active", value: "1" },
           { label: "Inactive", value: "0" },
         ],
@@ -65,7 +65,7 @@ let createCampaignFormField = [
         label: "Title",
         type: "text",
         placeholder: "",
-        name: "title",
+        name: "creative_name",
       },
       {
         label: "Description",
