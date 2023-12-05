@@ -12,9 +12,10 @@ class Creative extends Model
     protected $primaryKey = 'id';
     public $timestamp = true;
     protected $fillable = [
-        'name',
+        'creative_name',
         'preview_image',
         'final_url',
         'id_campaign',
+        'description'
     ];
 }

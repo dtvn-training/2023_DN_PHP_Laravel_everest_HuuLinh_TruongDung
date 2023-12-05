@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function deleteUser($id)
@@ -28,7 +28,7 @@ class UserController extends Controller
             'email' => 'email|unique:users',
             'first_name' => 'required',
             'last_name' => 'required',
-            'role_id' => 'required',
+            'role_id' => 'required|exists:roles,id',
             'address' => 'required',
             'phone' => 'required',
         ]);
@@ -48,14 +48,13 @@ class UserController extends Controller
         return response()->json(['message' => 'Update user successfully']);
     }
 
-    public function addUser(Request $request)
+    public function createUser(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
             'first_name' => 'required',
             'last_name' => 'required',
-            'role_id' => 'required',
+            'role_id' => 'required|exists:roles,id',
             'address' => 'required',
             'phone' => 'required',
             'password' => 'required|min:6',
@@ -69,13 +68,21 @@ class UserController extends Controller
     }
     public function index(Request $request)
     {
-        $searchEmail = $request->input('search_email');
-        $query = User::query();
-        if ($searchEmail) {
-            $query->where('email', 'like', "%$searchEmail%");
-        }
-        $users = $query->paginate(5);
+        if (Auth::user()->role_id == 3) {
+            $searchEmail = $request->input('search_email');
+            $query = User::query();
+            if ($searchEmail) {
+                $query->where('email', 'like', "%$searchEmail%");
+            }
+            $users = $query->paginate(3);
 
-        return response()->json([$users]);
+            return response()->json([$users]);
+        }
+        else if (Auth::user()->role_id == 2){
+            return response(["message"=>"Unauthorized Admin, You are DAC Account"], 401);
+        }
+        else{
+            return response(["message"=>"Unauthorized Admin, You are Advertiser"], 401);
+        }
     }
 }
