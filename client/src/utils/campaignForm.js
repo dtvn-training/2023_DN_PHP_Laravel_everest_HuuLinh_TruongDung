@@ -77,7 +77,7 @@ let createCampaignFormField = [
         label: "Creative preview",
         type: "image",
         placeholder: "",
-        name: "creative_preview",
+        name: "preview_image",
       },
       {
         label: "Final URL",
