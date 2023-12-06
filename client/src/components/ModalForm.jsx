@@ -22,6 +22,7 @@ const ModalForm = ({
 
   useEffect(() => {
     if (visible) {
+      formRef.current.reset();
       setFormData(defaultFormValue || initFormData);
     }
   }, [defaultFormValue, visible]);
@@ -64,7 +65,7 @@ const ModalForm = ({
     formRef.current.reset();
     setError(null);
   };
-  // formData !== initFormData && console.log(defaultFormValue, formData);
+
   return (
     <div className="form-model">
       <Rodal visible={visible} onClose={handleCloseForm}>

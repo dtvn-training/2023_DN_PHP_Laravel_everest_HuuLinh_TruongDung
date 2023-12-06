@@ -162,7 +162,6 @@ const AccountPage = () => {
       handleCloseForm("edit");
       if (data.id === currentUser.id) await dispatch(getProfile()).unwrap();
       await fetchUser();
-      handleChange("currentUser", {});
     } catch (error) {
       throw error;
     }
@@ -178,6 +177,7 @@ const AccountPage = () => {
       throw error;
     }
   };
+
   return (
     <>
       {pageState.loading ? (

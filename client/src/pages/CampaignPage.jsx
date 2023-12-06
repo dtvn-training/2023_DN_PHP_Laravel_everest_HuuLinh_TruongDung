@@ -169,7 +169,6 @@ const CampaignPage = () => {
         customFunction={handleCreateCampaign}
         formField={createCampaignFormField}
       />
-
       <ModalForm
         setVisible={() => handleCloseForm("edit")}
         visible={formState.edit}
