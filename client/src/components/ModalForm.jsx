@@ -3,6 +3,11 @@ import "rodal/lib/rodal.css";
 import "../assets/scss/components/ModalForm.scss";
 import { useEffect, useRef, useState } from "react";
 
+const initFormData = {
+  start_date: new Date().toISOString().substring(0, 16),
+  end_date: new Date().toISOString().substring(0, 16),
+};
+
 const ModalForm = ({
   title,
   visible,
@@ -11,15 +16,16 @@ const ModalForm = ({
   formField,
   defaultFormValue,
 }) => {
-  const [formData, setFormData] = useState(defaultFormValue || {});
+  const [formData, setFormData] = useState(defaultFormValue || initFormData);
   const [error, setError] = useState(null);
   const formRef = useRef();
 
   useEffect(() => {
     if (visible) {
-      setFormData(defaultFormValue || {});
+      formRef.current.reset();
+      setFormData(defaultFormValue || initFormData);
     }
-  }, [visible, defaultFormValue]);
+  }, [defaultFormValue, visible]);
 
   const handleFieldChange = (e) => {
     setFormData({
@@ -31,9 +37,7 @@ const ModalForm = ({
   const handleFileChange = (e) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [e.target.name]: e.target.files[0]
-        ? URL.createObjectURL(e.target.files[0])
-        : null,
+      [e.target.name]: e.target.files[0],
     }));
   };
 
@@ -57,7 +61,7 @@ const ModalForm = ({
 
   const handleCloseForm = () => {
     setVisible(false);
-    setFormData({});
+    setFormData(initFormData);
     formRef.current.reset();
     setError(null);
   };
@@ -137,7 +141,7 @@ const ModalForm = ({
                             <img
                               src={
                                 formData && formData[content.name] !== undefined
-                                  ? formData[content.name]
+                                  ? URL.createObjectURL(formData[content.name])
                                   : content.default
                               }
                             />

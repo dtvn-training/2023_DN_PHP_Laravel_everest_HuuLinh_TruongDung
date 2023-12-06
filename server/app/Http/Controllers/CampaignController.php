@@ -141,7 +141,6 @@ class CampaignController extends Controller
     public function index()
     {
         $campaigns = Campaign::with('creatives')->paginate(3);
-
         if ($campaigns->isEmpty()) {
             return response()->json(['message' => 'There are no campaigns!']);
         }

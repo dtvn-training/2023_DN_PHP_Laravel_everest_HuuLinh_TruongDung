@@ -9,6 +9,9 @@ import DownloadCSVButton from "../components/DownLoadCSVButton";
 import { useNavigate } from "react-router-dom";
 import { validateCreateAccountForm } from "../validators";
 import Loading from "../components/Loading";
+import { useDispatch, useSelector } from "react-redux";
+import { profile } from "../redux/selector";
+import { getProfile } from "../redux/slices/ProfileSlice";
 
 const initState = {
   resData: {
@@ -40,6 +43,8 @@ const AccountPage = () => {
     delete: false,
   });
   const navigate = useNavigate();
+  const currentUser = useSelector(profile);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchUser();
@@ -155,7 +160,8 @@ const AccountPage = () => {
       );
       toast.success(res.data.message);
       handleCloseForm("edit");
-      fetchUser();
+      if (data.id === currentUser.id) await dispatch(getProfile()).unwrap();
+      await fetchUser();
     } catch (error) {
       throw error;
     }
@@ -215,51 +221,53 @@ const AccountPage = () => {
               </button>
             </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>User Name</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Phone</th>
-                <th>Role</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pageState.resData.data.map((user, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{user.id}</td>
-                    <td className="break-word">
-                      {user.first_name + " " + user.last_name}
-                    </td>
-                    <td>{user.email}</td>
-                    <td>{user.address}</td>
-                    <td>{user.phone}</td>
-                    <td>{getRole(user.role_id)}</td>
-                    <td className="no-wrap">
-                      <button
-                        className="edit-btn"
-                        type="button"
-                        onClick={() => handleOpenEditForm(user)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="delete-btn"
-                        type="button"
-                        onClick={() => handleOpenDeleteForm(user)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User Name</th>
+                  <th>Email</th>
+                  <th>Address</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pageState.resData.data.map((user, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{user.id}</td>
+                      <td className="break-word">
+                        {user.first_name + " " + user.last_name}
+                      </td>
+                      <td>{user.email}</td>
+                      <td>{user.address}</td>
+                      <td>{user.phone}</td>
+                      <td>{getRole(user.role_id)}</td>
+                      <td className="no-wrap">
+                        <button
+                          className="edit-btn"
+                          type="button"
+                          onClick={() => handleOpenEditForm(user)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="delete-btn"
+                          type="button"
+                          onClick={() => handleOpenDeleteForm(user)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           <Pagination
             totalPages={pageState.resData.last_page}
             setPage={handleChange}

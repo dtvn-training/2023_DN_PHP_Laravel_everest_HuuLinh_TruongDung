@@ -114,10 +114,11 @@ const CampaignPage = () => {
   const handleSearchChange = async (e) => {};
 
   const handleCreateCampaign = async (data) => {
+    let formData = new FormData();
+    Object.keys(data).forEach((key) => formData.append(key, data[key]));
+
     try {
-      data.preview_image =
-        "https://th.bing.com/th/id/OIP.6hyCkhXzTvdas0w1VidsjwHaKe?w=203&h=287&c=7&r=0&o=5&pid=1.7";
-      const res = await api.post("api/campaign/create", data);
+      const res = await api.post("api/campaign/create", formData);
       toast.success(res.data.message);
       handleCloseForm("create");
       fetchCampaign();
@@ -127,8 +128,17 @@ const CampaignPage = () => {
   };
 
   const handleEditCampaign = async (data) => {
+    let formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      if (Array.isArray(data[key])) {
+        formData.append(key, JSON.stringify(data[key]));
+      } else {
+        formData.append(key, data[key]);
+      }
+    });
+
     try {
-      const res = await api.post(`api/campaign/update/${data.id}`, data);
+      const res = await api.post(`api/campaign/update/${data.id}`, formData);
       toast.success(res.data.message);
       handleCloseForm("edit");
       fetchCampaign();
@@ -195,72 +205,77 @@ const CampaignPage = () => {
           </button>
         </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Campaign Name</th>
-            <th>Status</th>
-            <th>Used Amount</th>
-            <th>Usage Rate</th>
-            <th>Budget</th>
-            <th>Start date</th>
-            <th>End Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pageState.resData.data.map((campaign, index) => {
-            return (
-              <tr key={index}>
-                <td>
-                  <div className="double-item-cell">
-                    <div className="img-container">
-                      {campaign.creatives.length > 0 && (
-                        <img src={campaign.creatives[0].preview_image} alt="" />
-                      )}
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign Name</th>
+              <th>Status</th>
+              <th>Used Amount</th>
+              <th>Usage Rate</th>
+              <th>Budget</th>
+              <th>Start date</th>
+              <th>End Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pageState.resData.data.map((campaign, index) => {
+              return (
+                <tr key={index}>
+                  <td>
+                    <div className="double-item-cell">
+                      <div className="img-container">
+                        {campaign.creatives.length > 0 && (
+                          <img
+                            src={campaign.creatives[0].preview_image}
+                            alt=""
+                          />
+                        )}
+                      </div>
+                      {campaign.campaign_name}
                     </div>
-                    {campaign.campaign_name}
-                  </div>
-                </td>
-                <td>
-                  {campaign.status === 1 ? (
-                    <i
-                      className="fa-solid fa-circle-dot fa-2xs"
-                      style={{ color: "greenyellow" }}
-                    ></i>
-                  ) : (
-                    <i
-                      className="fa-solid fa-circle-dot fa-2xs"
-                      style={{ color: "red" }}
-                    ></i>
-                  )}
-                </td>
-                <td>¥ {campaign.used_amount}</td>
-                <td>{campaign.usage_rate}%</td>
-                <td>¥ {campaign.budget}</td>
-                <td>{campaign.start_date}</td>
-                <td>{campaign.end_date}</td>
-                <td className="no-wrap">
-                  <button
-                    className="edit-btn"
-                    type="button"
-                    onClick={() => handleOpenEditForm(campaign)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="delete-btn"
-                    type="button"
-                    onClick={() => handleOpenDeleteForm(campaign)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                  </td>
+                  <td>
+                    {campaign.status === 1 ? (
+                      <i
+                        className="fa-solid fa-circle-dot fa-2xs"
+                        style={{ color: "greenyellow" }}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fa-solid fa-circle-dot fa-2xs"
+                        style={{ color: "red" }}
+                      ></i>
+                    )}
+                  </td>
+                  <td>¥ {campaign.used_amount}</td>
+                  <td>{campaign.usage_rate}%</td>
+                  <td>¥ {campaign.budget}</td>
+                  <td>{campaign.start_date}</td>
+                  <td>{campaign.end_date}</td>
+                  <td className="no-wrap">
+                    <button
+                      className="edit-btn"
+                      type="button"
+                      onClick={() => handleOpenEditForm(campaign)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="delete-btn"
+                      type="button"
+                      onClick={() => handleOpenDeleteForm(campaign)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       <Pagination
         totalPages={pageState.resData.last_page}
         setPage={handleChange}
