@@ -30,14 +30,11 @@ class CampaignController extends Controller
         $currentUser = Auth::user();
         $validator = Validator::make($request->all(), [
             'campaign_name' => 'required',
-            'status' => 'required|in:1,0',
+            'status' => 'required|in:1,0', //1:active 0: inactive
             'budget' => 'required|numeric|min:0',
             'bid_amount' => 'required|numeric|min:0',
             'start_date' => 'required',
             'end_date' => 'required',
-            'creatives.*.creative_name' => 'required',
-            'creatives.*.final_url' => 'required',
-            'creatives.*.description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -60,25 +57,50 @@ class CampaignController extends Controller
         if (!$campaign) {
             return response()->json(['message' => "Campaign not found"], 404);
         }
-        $campaign->update($campaignData);
 
-        // Update or Create Creatives
+        $campaign->update($campaignData);
+        // Update Creatives
+        $creativesData = $request->only([
+            'creative_name',
+            'final_url',
+            'preview_image',
+            'description',
+        ]);
+
+        // Lặp qua tất cả các creative và cập nhật dữ liệu
+        foreach ($campaign->creatives as $creative) {
+            $creative->update($creativesData);
+        }
+        
         if ($request->has('creatives') && is_array($request->creatives)) {
             foreach ($request->creatives as $creativeData) {
+                // Update the existing creative or create a new one
                 $creative = Creative::updateOrCreate(
-                    ['id' => $creativeData['id'] ?? null],
+                    ['id' => $creativeData['id'] ?? null, 'id_campaign' => $campaign->id],
                     [
                         'creative_name' => $creativeData['creative_name'],
                         'final_url' => $creativeData['final_url'],
                         'description' => $creativeData['description'],
                     ]
                 );
-
-                // If a new preview_image is provided, upload it to Cloudinary and update the URL
-                if (isset($creativeData['preview_image'])) {
-                    $uploadedFileUrl = Cloudinary::upload($request->file('preview_image')->getRealPath())->getSecurePath();
-                    $creative->preview_image = $uploadedFileUrl;
-                    $creative->save();
+    
+                
+                if ($request->preview_image) {
+                    $newPreviewImage = $request->file('creatives.' . $creativeData['id'] . '.preview_image');
+    
+                    // Check if the new image is valid
+                    if ($newPreviewImage->isValid()) {
+                        // Delete the old image
+                        if ($creative->preview_image) {
+                            $publicId = Cloudinary::getPublicId($creative->preview_image);
+                            Cloudinary::destroy($publicId);
+                        }
+    
+                        // Upload the new image to Cloudinary and update the URL
+                        $uploadedFileUrl = Cloudinary::upload($newPreviewImage->getRealPath())->getSecurePath();
+                        $creative->preview_image = $uploadedFileUrl;
+                        $creative->save();
+                    }
                 }
             }
         }
