@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "cloudinary-labs/cloudinary-laravel": "^2.0",
         "google/cloud-storage": "^1.35",
         "guzzlehttp/guzzle": "^7.2",
         "kreait/firebase-php": "^5.0",
