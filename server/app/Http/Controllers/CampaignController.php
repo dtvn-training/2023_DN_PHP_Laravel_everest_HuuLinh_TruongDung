@@ -35,10 +35,10 @@ class CampaignController extends Controller
             'bid_amount' => 'required|numeric|min:0',
             'start_date' => 'required',
             'end_date' => 'required',
-            'creative_name' => 'required',
-            'final_url' => 'required',
-            'preview_image' => 'required',
-            'description' => 'required',
+            'creatives.*.creative_name' => 'required',
+            'creatives.*.final_url' => 'required',
+            'creatives.*.preview_image' => 'required',
+            'creatives.*.description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -124,7 +124,7 @@ class CampaignController extends Controller
             'description',
         ]);
         $creativeData['id_campaign'] = $newCampaign->id;
-
+        
         $newCreative = Creative::create($creativeData);
         $newCreative->save();
 
