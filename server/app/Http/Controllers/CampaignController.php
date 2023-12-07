@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 use Illuminate\Http\Request;
-use GuzzleHttp\Client; 
+use GuzzleHttp\Client;
+
 class CampaignController extends Controller
 {
     public function deleteCampaign($id)
@@ -32,8 +33,8 @@ class CampaignController extends Controller
         $validator = Validator::make($request->all(), [
             'campaign_name' => 'required',
             'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:0',
-            'bid_amount' => 'required|numeric|min:0',
+            'budget' => 'required|numeric|min:1',
+            'bid_amount' => 'required|numeric|min:1',
             'start_date' => 'required',
             'end_date' => 'required',
         ]);
@@ -68,11 +69,9 @@ class CampaignController extends Controller
             'description',
         ]);
 
-        // Lặp qua tất cả các creative và cập nhật dữ liệu
-        foreach ($campaign->creatives as $creative) {
-            $creative->update($creativesData);
-        }
-        if($request->has('preview_image')) {
+
+
+        if ($request->has('preview_image')) {
             $uploadedFileUrl = Cloudinary::upload(
                 $request->file('preview_image')->getRealPath(),
                 [
@@ -80,8 +79,17 @@ class CampaignController extends Controller
                 ]
             )->getSecurePath();
             $creativesData['preview_image'] = $uploadedFileUrl;
+            //Xóa ảnh cũ từ db
+            foreach ($campaign->creatives as $creative) {
+                $publicId = pathinfo($creative->preview_image, PATHINFO_FILENAME);
+                Cloudinary::destroy($publicId);
+            }
         }
-        $creative->update($creativesData);
+        // Lặp qua tất cả các creative và cập nhật dữ liệu
+        foreach ($campaign->creatives as $creative) {
+            $creative->update($creativesData);
+        }
+
         return response()->json(['message' => 'Update campaign and creatives successfully']);
     }
 
@@ -93,8 +101,8 @@ class CampaignController extends Controller
             //campaign
             'campaign_name' => 'required',
             'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:0',
-            'bid_amount' => 'required|numeric|min:0',
+            'budget' => 'required|numeric|min:1',
+            'bid_amount' => 'required|numeric|min:1',
             'start_date' => 'required',
             'end_date' => 'required',
             //creative
