@@ -8,8 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
+use GuzzleHttp\Client; 
 class CampaignController extends Controller
 {
     public function deleteCampaign($id)
@@ -71,40 +72,16 @@ class CampaignController extends Controller
         foreach ($campaign->creatives as $creative) {
             $creative->update($creativesData);
         }
-        
-        if ($request->has('creatives') && is_array($request->creatives)) {
-            foreach ($request->creatives as $creativeData) {
-                // Update the existing creative or create a new one
-                $creative = Creative::updateOrCreate(
-                    ['id' => $creativeData['id'] ?? null, 'id_campaign' => $campaign->id],
-                    [
-                        'creative_name' => $creativeData['creative_name'],
-                        'final_url' => $creativeData['final_url'],
-                        'description' => $creativeData['description'],
-                    ]
-                );
-    
-                
-                if ($request->preview_image) {
-                    $newPreviewImage = $request->file('creatives.' . $creativeData['id'] . '.preview_image');
-    
-                    // Check if the new image is valid
-                    if ($newPreviewImage->isValid()) {
-                        // Delete the old image
-                        if ($creative->preview_image) {
-                            $publicId = Cloudinary::getPublicId($creative->preview_image);
-                            Cloudinary::destroy($publicId);
-                        }
-    
-                        // Upload the new image to Cloudinary and update the URL
-                        $uploadedFileUrl = Cloudinary::upload($newPreviewImage->getRealPath())->getSecurePath();
-                        $creative->preview_image = $uploadedFileUrl;
-                        $creative->save();
-                    }
-                }
-            }
+        if($request->has('preview_image')) {
+            $uploadedFileUrl = Cloudinary::upload(
+                $request->file('preview_image')->getRealPath(),
+                [
+                    'verify' => false,
+                ]
+            )->getSecurePath();
+            $creativesData['preview_image'] = $uploadedFileUrl;
         }
-
+        $creative->update($creativesData);
         return response()->json(['message' => 'Update campaign and creatives successfully']);
     }
 
@@ -153,7 +130,13 @@ class CampaignController extends Controller
             'description',
         ]);
         $creativeData['id_campaign'] = $newCampaign->id;
-        $uploadedFileUrl = Cloudinary::upload($request->file('preview_image')->getRealPath())->getSecurePath();
+        $uploadedFileUrl = Cloudinary::upload(
+            $request->file('preview_image')->getRealPath(),
+            [
+                'verify' => false,
+            ]
+        )->getSecurePath();
+
         $creativeData['preview_image'] = $uploadedFileUrl;
         $newCreative = Creative::create($creativeData);
         $newCreative->save();
@@ -163,10 +146,9 @@ class CampaignController extends Controller
     public function index()
     {
         $campaigns = Campaign::with('creatives')->paginate(3);
-        if ($campaigns->isEmpty()) {
-            return response()->json(['message' => 'There are no campaigns!']);
-        }
 
-        return response()->json($campaigns);
+        return response()->json(
+            $campaigns,
+        );
     }
 }

@@ -27,6 +27,10 @@ Route::group(['middleware'=>'api', 'prefix' => 'auth'],function($router){
     Route::post('/refresh',[AuthController::class,'refreshToken']);
 });
 
+// Route::group(['middleware'=>'api', 'prefix' => 'user'],function($router){
+//     Route::post('/create',[UserController::class,'createUser']);
+// });
+
 // ADMIN
 Route::group(['middleware' => ['api', 'role_id:2,3'], 'prefix' => 'user'], function ($router) {
     Route::get('/get',[UserController::class,'index']);
@@ -48,4 +52,3 @@ Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], fun
 
 // Advertiser
 // Route::group(['middleware' => ['api', 'role_id:1'], 'prefix' => 'user'], function ($router) {
-
