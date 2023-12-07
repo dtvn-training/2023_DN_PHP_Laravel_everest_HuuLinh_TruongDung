@@ -62,7 +62,7 @@ const AccountPage = () => {
           const res = await api.get(
             `api/user/get?search_email=${e.target.value}`
           );
-          handleChange("resData", res.data[0]);
+          handleChange("resData", res.data);
         } catch (error) {
           console.error(error);
         }

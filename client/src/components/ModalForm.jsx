@@ -134,7 +134,6 @@ const ModalForm = ({
                               type="file"
                               id={content.name}
                               name={content.name}
-                              // required
                               accept=".jpg,.png"
                               onChange={handleFileChange}
                             />
@@ -145,7 +144,6 @@ const ModalForm = ({
                                   : content.default
                               }
                             />
-                            {/* <label htmlFor={content.name}>Upload image</label> */}
                           </div>
                         ) : (
                           <input

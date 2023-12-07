@@ -1,20 +1,34 @@
-@import '../GlobalStyle.scss';
+@import "../Variables.scss";
+@import "../BreakPoints.scss";
 
-.filter-bar{
+.filter-bar {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 10px;
+  .date-input-field {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: fit-content;
-    margin-bottom: 10px;
-    label{
+    label {
       font-size: 14px;
       font-weight: bold;
       margin-right: 10px;
     }
-    input{
+    input {
       border: none;
       border-bottom: 1px solid $main-border-color;
       outline: none;
       margin-right: 10px;
     }
+  }
+}
+
+@include breakpoints(md) {
+  .filter-bar {
+    flex-direction: column;
+    margin: 0;
+    .date-input-field{
+      margin-bottom: 10px;
+    }
+  }
 }
