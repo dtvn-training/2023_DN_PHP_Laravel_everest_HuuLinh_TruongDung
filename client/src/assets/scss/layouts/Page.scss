@@ -1,4 +1,6 @@
-@import "../GlobalStyle.scss";
+@import "../Variables";
+@import "../Mixins";
+@import "../BreakPoints.scss";
 
 .page-container {
   width: calc(100vw - 300px);
@@ -16,10 +18,8 @@
     .right-control {
       display: flex;
       button {
+        @include buttonStyle();
         margin-left: 10px;
-        padding: 10px 20px;
-        background: $main-bg-color;
-        color: $light-text-color;
       }
     }
   }
@@ -43,6 +43,7 @@
           border: 1px solid $main-border-color;
           padding: 10px;
           text-align: center;
+          white-space: nowrap;
           .edit-btn {
             background: $edit-btn-color;
             color: $light-text-color;
@@ -66,9 +67,6 @@
               }
             }
           }
-          &.no-wrap {
-            white-space: nowrap;
-          }
           &.break-word {
             overflow-wrap: break-word;
             max-width: 200px;
@@ -79,5 +77,31 @@
         }
       }
     }
+  }
+}
+
+@include breakpoints(lg) {
+  .page-container {
+    width: calc(100vw - 200px);
+    padding: 20px;
+    .control-bar {
+      flex-direction: column;
+      margin-bottom: 10px;
+      .left-control {
+        margin-bottom: 10px;
+      }
+      .right-control {
+        button {
+          margin-left: 0;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoints(md) {
+  .page-container {
+    width: 100%;
   }
 }

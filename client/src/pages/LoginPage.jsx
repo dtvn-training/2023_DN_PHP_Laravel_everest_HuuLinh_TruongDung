@@ -3,6 +3,7 @@ import "../assets/scss/pages/LoginPage.scss";
 import { useNavigate } from "react-router-dom";
 import { validateLoginForm } from "../validators";
 import api from "../api/axios";
+import Loading from "../components/Loading";
 
 const initState = {
   email: "",
@@ -42,12 +43,13 @@ const LoginPage = () => {
       [e.target.name]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     const { email, password } = info;
-    const { emailError, passwordError } = validateLoginForm(email, password);
-    if (emailError === "" && passwordError === "") {
+    const error = validateLoginForm(email, password);
+    if (error.length === 0) {
       try {
         const res = await api.post("/api/auth/login", { email, password });
         localStorage.setItem(
@@ -67,15 +69,17 @@ const LoginPage = () => {
         } else {
           console.error(e);
         }
+      } finally {
+        setIsLoading(false);
       }
     } else {
-      setError(emailError || passwordError);
+      setError(error[0]);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return isAuthLoading ? (
-    <h1>Loading...</h1>
+    <Loading />
   ) : (
     <form method="POST" onSubmit={handleSubmit} className="login-form">
       <h1>WELCOME</h1>

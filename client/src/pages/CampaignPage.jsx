@@ -185,10 +185,14 @@ const CampaignPage = () => {
         message={"Please confirm that you want to delete the campaign"}
       />
       <div className="filter-bar">
-        <label>Start time:</label>
-        <input type="datetime-local" name="start_date" />
-        <label>End time:</label>
-        <input type="datetime-local" name="end_date" />
+        <div className="date-input-field">
+          <label>Start time:</label>
+          <input type="datetime-local" name="start_date" />
+        </div>
+        <div className="date-input-field">
+          <label>End time:</label>
+          <input type="datetime-local" name="end_date" />
+        </div>
       </div>
       <div className="control-bar">
         <div className="left-control">

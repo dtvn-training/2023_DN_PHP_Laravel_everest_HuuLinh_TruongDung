@@ -5,7 +5,7 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 html {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .container {
   width: 100vw;
