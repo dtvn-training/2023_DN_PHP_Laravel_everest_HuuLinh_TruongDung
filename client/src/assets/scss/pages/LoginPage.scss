@@ -1,5 +1,7 @@
+@import '../Variables.scss';
+
 $border-radius: 5px;
-form {
+.login-form {
   display: flex;
   flex-direction: column;
   min-width: 600px;
@@ -28,7 +30,7 @@ form {
     font-size: 18px;
     border-radius: $border-radius;
     &.green {
-      background: rgb(62, 161, 153);
+      background: $main-bg-color;
     }
     &.red {
       background: rgb(255, 67, 67);

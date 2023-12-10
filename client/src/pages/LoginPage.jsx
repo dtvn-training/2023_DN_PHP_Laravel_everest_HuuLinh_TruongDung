@@ -3,6 +3,7 @@ import "../assets/scss/pages/LoginPage.scss";
 import { useNavigate } from "react-router-dom";
 import { validateLoginForm } from "../validators";
 import api from "../api/axios";
+import Loading from "../components/Loading";
 
 const initState = {
   email: "",
@@ -19,14 +20,17 @@ const LoginPage = () => {
   useEffect(() => {
     const getProfile = async () => {
       setIsAuthLoading(true);
-      try {
-        const res = await api.get("/api/auth/profile");
-        if (res.data.id) {
-          navigate("/");
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        try {
+          const res = await api.get("/api/auth/profile");
+          if (res.data.id) {
+            navigate("/");
+          }
+        } catch (e) {
+          console.error(e);
+          setIsAuthLoading(false);
         }
-      } catch (e) {
-        console.error(e);
-        setIsAuthLoading(false);
       }
       setIsAuthLoading(false);
     };
@@ -44,34 +48,40 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     const { email, password } = info;
-    const { emailError, passwordError } = validateLoginForm(email, password);
-    if (emailError === "" && passwordError === "") {
+    const error = validateLoginForm(email, password);
+    if (error.length === 0) {
       try {
         const res = await api.post("/api/auth/login", { email, password });
         localStorage.setItem(
           "accessToken",
           JSON.stringify(res.data.access_token)
         );
+        localStorage.setItem(
+          "refreshToken",
+          JSON.stringify(res.data.refresh_token)
+        );
         navigate("/");
         setInfo(initState);
         setError("");
       } catch (e) {
         if (e.response && e.response.status === 401) {
-          setError(e.response.data);
+          setError(e.response.data.message);
         } else {
           console.error(e);
         }
+      } finally {
+        setIsLoading(false);
       }
     } else {
-      setError(emailError || passwordError);
+      setError(error[0]);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return isAuthLoading ? (
-    <h1>Loading...</h1>
+    <Loading />
   ) : (
-    <form method="POST" onSubmit={handleSubmit}>
+    <form method="POST" onSubmit={handleSubmit} className="login-form">
       <h1>WELCOME</h1>
       <input
         value={info.email}

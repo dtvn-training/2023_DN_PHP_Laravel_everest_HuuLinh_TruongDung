@@ -1,5 +1,7 @@
+@import '../Variables.scss';
+
 .header-container {
-    background: #3ea199;
+    background: $main-bg-color;
     width: 100%;
     padding: 10px 20px;
     display: flex;
@@ -13,6 +15,11 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+        }
       }
       .dropdown-contents {
         position: absolute;
@@ -28,6 +35,8 @@
             padding: 10px;
             cursor: pointer;
             border: none;
+            background: #fff;
+            border-radius: 0;
           }
         }
       }

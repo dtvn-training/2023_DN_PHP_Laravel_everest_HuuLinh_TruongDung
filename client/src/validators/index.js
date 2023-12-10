@@ -1,13 +1,5 @@
 import validator from "validator";
 
-export const validateName = (name) => {
-  if (name === "") {
-    return "Please input name";
-  } else {
-    return "";
-  }
-};
-
 export const validateEmail = (email) => {
   if (email === "") {
     return "Please input email";
@@ -27,38 +19,37 @@ export const validatePassword = (password) => {
 };
 export const validatePasswordConfirmation = (password, passwordConfirm) => {
   if (password !== passwordConfirm) {
-    return "Those passwords did not match. Try again.";
+    return "Confirm password does not match";
   } else {
     return "";
   }
 };
-export const validateRegisterForm = (
-  name,
-  email,
-  password,
-  passwordConfirm
-) => {
-  const nameError = validateName(name);
+
+export const validateLoginForm = (email, password) => {
+  const errors = [];
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
+
+  if (emailError) {
+    errors.push(emailError);
+  }
+  if (passwordError) {
+    errors.push(passwordError);
+  }
+
+  return errors;
+};
+
+export const validateCreateAccountForm = (password, passwordConfirm) => {
+  const errors = [];
   const passwordConfirmError = validatePasswordConfirmation(
     password,
     passwordConfirm
   );
-  return {
-    nameError,
-    emailError,
-    passwordError,
-    passwordConfirmError,
-  };
-};
 
-export const validateLoginForm = (email, password) => {
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
+  if (passwordConfirmError) {
+    errors.push(passwordConfirmError);
+  }
 
-  return {
-    emailError,
-    passwordError,
-  };
+  return errors;
 };

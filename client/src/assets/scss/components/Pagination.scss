@@ -1,0 +1,25 @@
+@import "../Variables.scss";
+
+.pagination-bar {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  ul {
+    display: flex;
+    li {
+      padding: 10px 0;
+      a {
+        padding: 10px;
+        cursor: pointer;
+        color: $main-bg-color;
+        font-size: 16px;
+      }
+      &.active {
+        background: $main-bg-color;
+        a {
+          color: #fff;
+        }
+      }
+    }
+  }
+}
