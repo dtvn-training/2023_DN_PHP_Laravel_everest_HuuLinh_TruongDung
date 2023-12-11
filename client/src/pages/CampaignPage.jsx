@@ -5,7 +5,6 @@ import {
   createCampaignFormField,
   editCampaignFormField,
 } from "../utils/campaignForm";
-import "../assets/scss/pages/CampainPage.scss";
 import Pagination from "../components/Pagination";
 import DeleteModal from "../components/DeleteModal";
 import api from "../api/axios";
@@ -241,17 +240,12 @@ const CampaignPage = () => {
                     </div>
                   </td>
                   <td>
-                    {campaign.status === 1 ? (
-                      <i
-                        className="fa-solid fa-circle-dot fa-2xs"
-                        style={{ color: "greenyellow" }}
-                      ></i>
-                    ) : (
-                      <i
-                        className="fa-solid fa-circle-dot fa-2xs"
-                        style={{ color: "red" }}
-                      ></i>
-                    )}
+                    <i
+                      className="fa-solid fa-circle-dot fa-2xs"
+                      style={{
+                        color: campaign.status == 1 ? "greenyellow" : "red",
+                      }}
+                    ></i>
                   </td>
                   <td>¥ {campaign.used_amount}</td>
                   <td>{campaign.usage_rate}%</td>
@@ -280,11 +274,13 @@ const CampaignPage = () => {
           </tbody>
         </table>
       </div>
-      <Pagination
-        totalPages={pageState.resData.last_page}
-        setPage={handleChange}
-        current_page={pageState.resData.current_page}
-      />
+      {pageState.resData.last_page > 1 && (
+        <Pagination
+          totalPages={pageState.resData.last_page}
+          setPage={handleChange}
+          current_page={pageState.resData.current_page}
+        />
+      )}
     </div>
   );
 };

@@ -1,8 +1,25 @@
-@import '../Variables.scss';
+@import "../Variables.scss";
 
-.banner-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
+.banner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px;
+  .slick-slider{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    ul{
+        bottom: 0;
+    }
+  }
+  .banner-container {
+    width: 200px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
 }

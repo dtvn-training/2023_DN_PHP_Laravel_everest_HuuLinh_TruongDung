@@ -11,8 +11,7 @@
     margin-bottom: 20px;
     .left-control {
       input {
-        border: none;
-        background: #ccc;
+        @include searchInput;
       }
     }
     .right-control {
@@ -20,6 +19,27 @@
       button {
         @include buttonStyle();
         margin-left: 10px;
+      }
+    }
+  }
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 10px;
+    .date-input-field {
+      display: flex;
+      align-items: center;
+      label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+      input {
+        border: none;
+        border-bottom: 1px solid $main-border-color;
+        outline: none;
+        margin-right: 10px;
       }
     }
   }
@@ -80,10 +100,8 @@
   }
 }
 
-@include breakpoints(lg) {
+@include breakpoints(xl) {
   .page-container {
-    width: calc(100vw - 200px);
-    padding: 20px;
     .control-bar {
       flex-direction: column;
       margin-bottom: 10px;
@@ -100,8 +118,22 @@
   }
 }
 
+@include breakpoints(lg) {
+  .page-container {
+    width: calc(100vw - 200px);
+    padding: 20px;
+  }
+}
+
 @include breakpoints(md) {
   .page-container {
     width: 100%;
+    .filter-bar {
+      flex-direction: column;
+      margin: 0;
+      .date-input-field {
+        margin-bottom: 10px;
+      }
+    }
   }
 }
