@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon;
 class CampaignController extends Controller
 {
     public function deleteCampaign($id)
@@ -32,10 +32,30 @@ class CampaignController extends Controller
         $validator = Validator::make($request->all(), [
             'campaign_name' => 'required|max:50',
             'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:1|max:1000000000',
+            'budget' => [
+                'required',
+                'numeric',
+                'min:1',
+                'max:1000000000',
+                function ($attribute, $value, $fail) use ($request) {
+                    $bidAmount = $request->input('bid_amount');
+                    if ($value < $bidAmount) {
+                        $fail('The budget must be greater than or equal to the bid amount.');
+                    }
+                },
+            ],
             'bid_amount' => 'required|numeric|min:1|max:1000000000',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|date_format:Y-m-d H:i:s',
+            'start_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $currentDate = Carbon::now();
+                    if (Carbon::parse($value)->lt($currentDate)) {
+                        $fail('The start date must be from the current date onwards.');
+                    }
+                },
+            ],
+            'end_date' => 'required|date',
 
             'creative_name' => 'max:50',
             'description' => 'max:100',
@@ -50,6 +70,7 @@ class CampaignController extends Controller
             return response()->json(['message' => "Campaign not found"], 404);
         }
 
+
         // Update Campaign
         $campaignData = $request->only([
             'campaign_name',
@@ -63,10 +84,18 @@ class CampaignController extends Controller
         $campaignData['usage_rate'] = ($campaignData['bid_amount'] / $campaignData['budget']) * 100;
 
         // Check status after updating budget
-        if ($campaignData['budget'] > 0 && $campaign->used_amount < $campaignData['budget']) {
-            $campaignData['status'] = 1; // Active
+        // Check if the status is being updated
+        $newStatus = $request->input('status');
+        if ($newStatus !== $campaign->status) {
+            // Status is being updated, save it to the database
+            $campaign->status = $newStatus;
+            $campaign->save();
         } else {
-            $campaignData['status'] = 0; // Inactive
+            if ($campaignData['budget'] > 0 && $campaign->used_amount < $campaignData['budget']) {
+                $campaignData['status'] = 1; // Active
+            } else {
+                $campaignData['status'] = 0; // Inactive
+            }
         }
 
         $campaign->update($campaignData);
@@ -106,23 +135,35 @@ class CampaignController extends Controller
     {
         $currentUser = Auth::user();
         $validator = Validator::make($request->all(), [
-            //campaign
             'campaign_name' => 'required',
-            'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:1|max:1000000000',
+            'status' => 'required|in:1,0', // 1:active 0: inactive
+            'budget' => [
+                'required',
+                'numeric',
+                'min:1',
+                'max:1000000000',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Custom validation rule to check if budget is not less than bid_amount
+                    $bidAmount = $request->input('bid_amount');
+                    if ($value < $bidAmount) {
+                        $fail('The budget must be greater than or equal to the bid amount.');
+                    }
+                },
+            ],
             'bid_amount' => 'required|numeric|min:1|max:1000000000',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            
-            //creative
+
             'creative_name' => 'required|max:50',
             'final_url' => 'required|max:500',
             'preview_image' => 'required|max:500',
             'description' => 'required|max:100',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         // Create Campaign
         $campaignData = $request->only([
             'campaign_name',
@@ -160,12 +201,13 @@ class CampaignController extends Controller
 
         return response()->json(['message' => 'Create campaign successfully']);
     }
+
     public function index(Request $request)
     {
         try {
-            $searchCampaign = $request->input('searchCampaign');
-            $searchStartDate = $request->input('searchStartDate'); // Corrected
-            $searchEndDate = $request->input('searchEndDate'); // Corrected
+            $searchCampaign = $request->input('search_campaign');
+            $searchStartDate = $request->input('start_date'); // Corrected
+            $searchEndDate = $request->input('end_date'); // Corrected
 
             $query = Campaign::query();
 
