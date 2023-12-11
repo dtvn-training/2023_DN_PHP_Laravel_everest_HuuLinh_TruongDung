@@ -26,15 +26,15 @@
         display: none;
         white-space: nowrap;
         width: 150%;
-        background: $main-bg-color;
         a {
+          background: #fff;
           padding: 10px;
-          color: $light-text-color;
+          color: $main-bg-color;
           text-decoration: none;
           font-weight: bold;
           &:hover {
-            background: #fff;
-            color: $main-bg-color;
+            color: #fff;
+            background: $main-bg-color;
           }
         }
       }
