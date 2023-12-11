@@ -34,8 +34,8 @@ class CampaignController extends Controller
             'status' => 'required|in:1,0', //1:active 0: inactive
             'budget' => 'required|numeric|min:1|max:1000000000',
             'bid_amount' => 'required|numeric|min:1|max:1000000000',
-            'start_date' => 'required|timestamp',
-            'end_date' => 'required|timestamp',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|date_format:Y-m-d H:i:s',
 
             'creative_name' => 'max:50',
             'description' => 'max:100',
@@ -109,15 +109,16 @@ class CampaignController extends Controller
             //campaign
             'campaign_name' => 'required',
             'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:1',
-            'bid_amount' => 'required|numeric|min:1',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            'budget' => 'required|numeric|min:1|max:1000000000',
+            'bid_amount' => 'required|numeric|min:1|max:1000000000',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            
             //creative
-            'creative_name' => 'required',
-            'final_url' => 'required',
-            'preview_image' => 'required',
-            'description' => 'required',
+            'creative_name' => 'required|max:50',
+            'final_url' => 'required|max:500',
+            'preview_image' => 'required|max:500',
+            'description' => 'required|max:100',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -180,7 +181,7 @@ class CampaignController extends Controller
                 $query->where('end_date', '<=', $searchEndDate);
             }
 
-            $campaigns = $query->with('creatives')->paginate(1);
+            $campaigns = $query->with('creatives')->paginate(3);
 
             return response()->json($campaigns);
         } catch (\Exception $e) {
