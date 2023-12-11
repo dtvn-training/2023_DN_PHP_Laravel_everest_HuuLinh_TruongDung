@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Campaign;
 use App\Models\Creative;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
 
 class CampaignController extends Controller
 {
@@ -21,6 +18,7 @@ class CampaignController extends Controller
             return response()->json(['message' => "Campaign not found"], 404);
         }
         foreach ($campaign->creatives as $creative) {
+            
             $creative->delete();
         }
         $campaign->delete();
@@ -43,6 +41,11 @@ class CampaignController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
+        $campaign = Campaign::find($id);
+        if (!$campaign) {
+            return response()->json(['message' => "Campaign not found"], 404);
+        }
+
         // Update Campaign
         $campaignData = $request->only([
             'campaign_name',
@@ -55,12 +58,15 @@ class CampaignController extends Controller
         $campaignData['user_updated'] = $currentUser->id;
         $campaignData['usage_rate'] = ($campaignData['bid_amount'] / $campaignData['budget']) * 100;
 
-        $campaign = Campaign::find($id);
-        if (!$campaign) {
-            return response()->json(['message' => "Campaign not found"], 404);
+        // Check status after updating budget
+        if ($campaignData['budget'] > 0 && $campaign->used_amount < $campaignData['budget']) {
+            $campaignData['status'] = 1; // Active
+        } else {
+            $campaignData['status'] = 0; // Inactive
         }
 
         $campaign->update($campaignData);
+
         // Update Creatives
         $creativesData = $request->only([
             'creative_name',
@@ -68,8 +74,6 @@ class CampaignController extends Controller
             'preview_image',
             'description',
         ]);
-
-
 
         if ($request->has('preview_image')) {
             $uploadedFileUrl = Cloudinary::upload(
@@ -79,20 +83,20 @@ class CampaignController extends Controller
                 ]
             )->getSecurePath();
             $creativesData['preview_image'] = $uploadedFileUrl;
-            //Xóa ảnh cũ từ db
+            // Delete old images from the database
             foreach ($campaign->creatives as $creative) {
                 $publicId = pathinfo($creative->preview_image, PATHINFO_FILENAME);
                 Cloudinary::destroy($publicId);
             }
         }
-        // Lặp qua tất cả các creative và cập nhật dữ liệu
+
+        // Loop through all creatives and update data
         foreach ($campaign->creatives as $creative) {
             $creative->update($creativesData);
         }
 
         return response()->json(['message' => 'Update campaign and creatives successfully']);
     }
-
 
     public function createCampaign(Request $request)
     {
@@ -151,9 +155,14 @@ class CampaignController extends Controller
 
         return response()->json(['message' => 'Create campaign successfully']);
     }
-    public function index()
+    public function index(Request $request)
     {
-        $campaigns = Campaign::with('creatives')->paginate(3);
+        $searchCampaign = $request->input('searchCampaign');
+        $query = Campaign::query();
+        if ($searchCampaign) {
+            $query->where('campaign_name', 'like', "%$searchCampaign%");
+        }
+        $campaigns = $query->with('creatives')->paginate(3);
 
         return response()->json(
             $campaigns,
