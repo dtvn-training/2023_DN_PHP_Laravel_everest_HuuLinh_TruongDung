@@ -206,8 +206,8 @@ class CampaignController extends Controller
     {
         try {
             $searchCampaign = $request->input('search_campaign');
-            $searchStartDate = $request->input('start_date'); // Corrected
-            $searchEndDate = $request->input('end_date'); // Corrected
+            $searchStartDate = $request->input('start_date');
+            $searchEndDate = $request->input('end_date');
 
             $query = Campaign::query();
 
