@@ -18,7 +18,6 @@ class BannerController extends Controller
 
         $bid_amount = $campaign->bid_amount;
         $used_amount = $campaign->used_amount + $bid_amount;
-        $usage_rate = ($used_amount / $campaign->budget) * 100;
 
         $remain = $campaign->budget - $used_amount;
 
@@ -30,7 +29,6 @@ class BannerController extends Controller
         } else {
             // Save the changes to the database
             $campaign->used_amount = $used_amount;
-            $campaign->usage_rate = $usage_rate;
             $campaign->save();
             return response()->json(['message' => $campaign]);
         }
