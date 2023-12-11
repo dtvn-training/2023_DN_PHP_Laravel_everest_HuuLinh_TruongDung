@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\BannerController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -43,7 +45,17 @@ Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], fun
     Route::post('/create',[CampaignController::class,'createCampaign']);
     Route::post('/update/{id}',[CampaignController::class,'updateCampaign']);
     Route::get('/delete/{id}',[CampaignController::class,'deleteCampaign']);
+
 });
+
+//Banner
+Route::group(['middleware' => ['api'], 'prefix' => 'banner'], function ($router) {
+    Route::get('/',[BannerController::class,'getBanner']);
+    Route::get('/impression/{id}',[BannerController::class,'impression']);
+});
+
+// Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'banner'], function ($router) {
+// });
 
 // DAC Account
 // Route::group(['middleware' => ['api', 'role_id:2'], 'prefix' => 'user'], function ($router) {

@@ -7,7 +7,6 @@ use App\Models\Creative;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-
 use Illuminate\Http\Request;
 
 class CampaignController extends Controller
@@ -33,10 +32,10 @@ class CampaignController extends Controller
         $validator = Validator::make($request->all(), [
             'campaign_name' => 'required|max:50',
             'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:1',
-            'bid_amount' => 'required|numeric|min:1',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            'budget' => 'required|numeric|min:1|max:1000000000',
+            'bid_amount' => 'required|numeric|min:1|max:1000000000',
+            'start_date' => 'required|timestamp',
+            'end_date' => 'required|timestamp',
 
             'creative_name' => 'max:50',
             'description' => 'max:100',
@@ -44,6 +43,11 @@ class CampaignController extends Controller
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
+        }
+
+        $campaign = Campaign::find($id);
+        if (!$campaign) {
+            return response()->json(['message' => "Campaign not found"], 404);
         }
 
         // Update Campaign
@@ -58,12 +62,15 @@ class CampaignController extends Controller
         $campaignData['user_updated'] = $currentUser->id;
         $campaignData['usage_rate'] = ($campaignData['bid_amount'] / $campaignData['budget']) * 100;
 
-        $campaign = Campaign::find($id);
-        if (!$campaign) {
-            return response()->json(['message' => "Campaign not found"], 404);
+        // Check status after updating budget
+        if ($campaignData['budget'] > 0 && $campaign->used_amount < $campaignData['budget']) {
+            $campaignData['status'] = 1; // Active
+        } else {
+            $campaignData['status'] = 0; // Inactive
         }
 
         $campaign->update($campaignData);
+
         // Update Creatives
         $creativesData = $request->only([
             'creative_name',
@@ -71,8 +78,6 @@ class CampaignController extends Controller
             'preview_image',
             'description',
         ]);
-
-
 
         if ($request->has('preview_image')) {
             $uploadedFileUrl = Cloudinary::upload(
@@ -82,20 +87,20 @@ class CampaignController extends Controller
                 ]
             )->getSecurePath();
             $creativesData['preview_image'] = $uploadedFileUrl;
-            //Xóa ảnh cũ từ db
+            // Delete old images from the database
             foreach ($campaign->creatives as $creative) {
                 $publicId = pathinfo($creative->preview_image, PATHINFO_FILENAME);
                 Cloudinary::destroy($publicId);
             }
         }
-        // Lặp qua tất cả các creative và cập nhật dữ liệu
+
+        // Loop through all creatives and update data
         foreach ($campaign->creatives as $creative) {
             $creative->update($creativesData);
         }
 
         return response()->json(['message' => 'Update campaign and creatives successfully']);
     }
-
 
     public function createCampaign(Request $request)
     {
@@ -154,12 +159,32 @@ class CampaignController extends Controller
 
         return response()->json(['message' => 'Create campaign successfully']);
     }
-    public function index()
+    public function index(Request $request)
     {
-        $campaigns = Campaign::with('creatives')->paginate(3);
+        try {
+            $searchCampaign = $request->input('searchCampaign');
+            $searchStartDate = $request->input('searchStartDate'); // Corrected
+            $searchEndDate = $request->input('searchEndDate'); // Corrected
 
-        return response()->json(
-            $campaigns,
-        );
+            $query = Campaign::query();
+
+            if ($searchCampaign) {
+                $query->where('campaign_name', 'like', "%$searchCampaign%");
+            }
+
+            if ($searchStartDate) {
+                $query->where('start_date', '>=', $searchStartDate);
+            }
+
+            if ($searchEndDate) {
+                $query->where('end_date', '<=', $searchEndDate);
+            }
+
+            $campaigns = $query->with('creatives')->paginate(1);
+
+            return response()->json($campaigns);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
