@@ -51,7 +51,7 @@ let createCampaignFormField = [
     section_title: "Bidding",
     contents: [
       {
-        label: "Bidding",
+        label: "Bid Amount",
         type: "number",
         placeholder: "1000000",
         name: "bid_amount",
@@ -147,7 +147,7 @@ let editCampaignFormField = [
     section_title: "Bidding",
     contents: [
       {
-        label: "Bidding",
+        label: "Bid Amount",
         type: "number",
         placeholder: "1000000",
         name: "bid_amount",

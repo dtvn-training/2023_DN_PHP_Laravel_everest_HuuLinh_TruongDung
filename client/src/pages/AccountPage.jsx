@@ -268,11 +268,13 @@ const AccountPage = () => {
               </tbody>
             </table>
           </div>
-          <Pagination
-            totalPages={pageState.resData.last_page}
-            setPage={handleChange}
-            current_page={pageState.resData.current_page}
-          />
+          {pageState.resData.last_page > 1 && (
+            <Pagination
+              totalPages={pageState.resData.last_page}
+              setPage={handleChange}
+              current_page={pageState.resData.current_page}
+            />
+          )}
         </div>
       )}
     </>

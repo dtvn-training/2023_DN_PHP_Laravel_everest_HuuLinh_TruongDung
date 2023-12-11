@@ -1,5 +1,10 @@
 @mixin buttonStyle {
-    padding: 10px 20px;
-    background: $main-bg-color;
-    color: $light-text-color;
-  }
+  padding: 10px 20px;
+  background: $main-bg-color;
+  color: $light-text-color;
+}
+
+@mixin searchInput{
+  border: none;
+  background: #ccc;
+}
