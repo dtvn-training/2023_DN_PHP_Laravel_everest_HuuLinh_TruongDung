@@ -32,10 +32,10 @@ class CampaignController extends Controller
         $validator = Validator::make($request->all(), [
             'campaign_name' => 'required|max:50',
             'status' => 'required|in:1,0', //1:active 0: inactive
-            'budget' => 'required|numeric|min:1',
-            'bid_amount' => 'required|numeric|min:1',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            'budget' => 'required|numeric|min:1|max:1000000000',
+            'bid_amount' => 'required|numeric|min:1|max:1000000000',
+            'start_date' => 'required|timestamp',
+            'end_date' => 'required|timestamp',
 
             'creative_name' => 'max:50',
             'description' => 'max:100',
@@ -161,15 +161,30 @@ class CampaignController extends Controller
     }
     public function index(Request $request)
     {
-        $searchCampaign = $request->input('searchCampaign');
-        $query = Campaign::query();
-        if ($searchCampaign) {
-            $query->where('campaign_name', 'like', "%$searchCampaign%");
-        }
-        $campaigns = $query->with('creatives')->paginate(3);
+        try {
+            $searchCampaign = $request->input('searchCampaign');
+            $searchStartDate = $request->input('searchStartDate'); // Corrected
+            $searchEndDate = $request->input('searchEndDate'); // Corrected
 
-        return response()->json(
-            $campaigns,
-        );
+            $query = Campaign::query();
+
+            if ($searchCampaign) {
+                $query->where('campaign_name', 'like', "%$searchCampaign%");
+            }
+
+            if ($searchStartDate) {
+                $query->where('start_date', '>=', $searchStartDate);
+            }
+
+            if ($searchEndDate) {
+                $query->where('end_date', '<=', $searchEndDate);
+            }
+
+            $campaigns = $query->with('creatives')->paginate(1);
+
+            return response()->json($campaigns);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
