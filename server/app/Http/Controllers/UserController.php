@@ -25,11 +25,11 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'email|unique:users',
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => 'required|max:20',
+            'last_name' => 'required|max:20',
             'role_id' => 'required|exists:roles,id',
-            'address' => 'required',
-            'phone' => 'required',
+            'address' => 'required|max:50',
+            'phone' => 'required|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -51,11 +51,11 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => 'required|max:20',
+            'last_name' => 'required|max:20',
             'role_id' => 'required|exists:roles,id',
-            'address' => 'required',
-            'phone' => 'required',
+            'address' => 'required|max:50',
+            'phone' => 'required|max:20',
             'password' => 'required|min:6',
         ]);
         if ($validator->fails()) {

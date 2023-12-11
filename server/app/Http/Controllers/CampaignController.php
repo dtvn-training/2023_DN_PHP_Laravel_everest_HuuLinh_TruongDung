@@ -18,7 +18,8 @@ class CampaignController extends Controller
             return response()->json(['message' => "Campaign not found"], 404);
         }
         foreach ($campaign->creatives as $creative) {
-            
+            $publicId = pathinfo($creative->preview_image, PATHINFO_FILENAME);
+            Cloudinary::destroy($publicId);
             $creative->delete();
         }
         $campaign->delete();
@@ -29,12 +30,15 @@ class CampaignController extends Controller
     {
         $currentUser = Auth::user();
         $validator = Validator::make($request->all(), [
-            'campaign_name' => 'required',
+            'campaign_name' => 'required|max:50',
             'status' => 'required|in:1,0', //1:active 0: inactive
             'budget' => 'required|numeric|min:1',
             'bid_amount' => 'required|numeric|min:1',
             'start_date' => 'required',
             'end_date' => 'required',
+
+            'creative_name' => 'max:50',
+            'description' => 'max:100',
         ]);
 
         if ($validator->fails()) {
