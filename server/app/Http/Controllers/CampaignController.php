@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+
 class CampaignController extends Controller
 {
     public function deleteCampaign($id)
@@ -45,18 +46,22 @@ class CampaignController extends Controller
                 },
             ],
             'bid_amount' => 'required|numeric|min:1|max:1000000000',
-            'start_date' => [
+            'start_date' => 'required', 'date', 'after_or_equal:today',
+            'end_date' => [
                 'required',
                 'date',
-                function ($attribute, $value, $fail) {
-                    $currentDate = Carbon::now();
-                    if (Carbon::parse($value)->lt($currentDate)) {
-                        $fail('The start date must be from the current date onwards.');
+                function ($attribute, $value, $fail) use ($request) {
+                    $startDate = Carbon::parse($request->input('start_date'), 'Asia/Ho_Chi_Minh')->startOfDay();
+                    $endDate = Carbon::parse($value, 'Asia/Ho_Chi_Minh')->startOfDay();
+
+                    if ($endDate->eq($startDate)) {
+                        $request->merge(['status' => 0]);
+                    } else {
+                        $request->merge(['status' => 1]);
                     }
                 },
+                'after_or_equal:start_date',
             ],
-            'end_date' => 'required|date',
-
             'creative_name' => 'max:50',
             'description' => 'max:100',
         ]);
@@ -70,7 +75,6 @@ class CampaignController extends Controller
             return response()->json(['message' => "Campaign not found"], 404);
         }
 
-
         // Update Campaign
         $campaignData = $request->only([
             'campaign_name',
@@ -83,7 +87,6 @@ class CampaignController extends Controller
         $campaignData['user_updated'] = $currentUser->id;
         $campaignData['usage_rate'] = ($campaignData['bid_amount'] / $campaignData['budget']) * 100;
 
-        // Check status after updating budget
         // Check if the status is being updated
         $newStatus = $request->input('status');
         if ($newStatus !== $campaign->status) {
@@ -131,6 +134,7 @@ class CampaignController extends Controller
         return response()->json(['message' => 'Update campaign and creatives successfully']);
     }
 
+
     public function createCampaign(Request $request)
     {
         $currentUser = Auth::user();
@@ -152,7 +156,21 @@ class CampaignController extends Controller
             ],
             'bid_amount' => 'required|numeric|min:1|max:1000000000',
             'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'end_date' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $startDate = Carbon::parse($request->input('start_date'), 'Asia/Ho_Chi_Minh')->startOfDay();
+                    $endDate = Carbon::parse($value, 'Asia/Ho_Chi_Minh')->startOfDay();
+
+                    if ($endDate->eq($startDate)) {
+                        $request->merge(['status' => 0]);
+                    } else {
+                        $request->merge(['status' => 1]);
+                    }
+                },
+                'after_or_equal:start_date',
+            ],
 
             'creative_name' => 'required|max:50',
             'final_url' => 'required|max:500',
