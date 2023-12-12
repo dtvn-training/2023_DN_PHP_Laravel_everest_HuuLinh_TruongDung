@@ -29,6 +29,10 @@ const initState = {
   current_page: 1,
   currentCampaign: {},
   localEditCampaignFormField: [...editCampaignFormField],
+  timeoutId: null,
+  start_date: null,
+  end_date: null,
+  search_campaign: null,
 };
 
 const CampaignPage = () => {
@@ -42,6 +46,10 @@ const CampaignPage = () => {
   useEffect(() => {
     fetchCampaign();
   }, [pageState.current_page]);
+
+  useEffect(() => {
+    handleSearchAndFilter();
+  }, [pageState.start_date, pageState.end_date, pageState.search_campaign]);
 
   const fetchCampaign = async () => {
     try {
@@ -110,7 +118,34 @@ const CampaignPage = () => {
     handleOpenForm("delete");
   };
 
-  const handleSearchChange = async (e) => {};
+  const handleSearchAndFilter = async () => {
+    const timeoutId = pageState.timeoutId;
+
+    if (timeoutId) clearTimeout(timeoutId);
+
+    handleChange(
+      "timeoutId",
+      setTimeout(async () => {
+        try {
+          const res = await api.get(`api/campaign/get`, {
+            params: {
+              start_date: pageState.start_date,
+              end_date: pageState.end_date,
+              search_campaign: pageState.search_campaign,
+            },
+          });
+          handleChange("resData", res.data);
+        } catch (error) {
+          if (error.response && error.response.status === 401) {
+            navigate("/");
+            toast.error(error.response.data.message);
+          } else {
+            console.error(error);
+          }
+        }
+      }, 500)
+    );
+  };
 
   const handleCreateCampaign = async (data) => {
     let formData = new FormData();
@@ -186,11 +221,19 @@ const CampaignPage = () => {
       <div className="filter-bar">
         <div className="date-input-field">
           <label>Start time:</label>
-          <input type="datetime-local" name="start_date" />
+          <input
+            type="datetime-local"
+            name="start_date"
+            onChange={(e) => handleChange(e.target.name, e.target.value)}
+          />
         </div>
         <div className="date-input-field">
           <label>End time:</label>
-          <input type="datetime-local" name="end_date" />
+          <input
+            type="datetime-local"
+            name="end_date"
+            onChange={(e) => handleChange(e.target.name, e.target.value)}
+          />
         </div>
       </div>
       <div className="control-bar">
@@ -198,7 +241,8 @@ const CampaignPage = () => {
           <input
             type="text"
             placeholder="Search ..."
-            onChange={handleSearchChange}
+            name="search_campaign"
+            onChange={(e) => handleChange(e.target.name, e.target.value)}
           />
         </div>
         <div className="right-control">

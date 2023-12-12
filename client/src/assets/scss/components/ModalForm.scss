@@ -48,6 +48,7 @@
             border: 1px solid $main-border-color;
             height: 200px;
             position: relative;
+            padding: 10px;
             input[type="file"] {
               display: none;
               cursor: pointer;
@@ -126,6 +127,85 @@
       width: 800px !important;
       height: fit-content !important;
       padding: 0 !important;
+    }
+  }
+}
+
+@include breakpoints(lg) {
+  .form-model {
+    .modal-container {
+      form {
+        .section-item {
+          .input-field {
+            .datetime-field {
+              flex-direction: column;
+              justify-content: center;
+              width: auto;
+              flex: 1;
+              .datetime-item {
+                width: auto;
+                flex: 1;
+                margin-bottom: 10px;
+                label {
+                  width: 65px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .rodal {
+      .rodal-dialog {
+        width: 90vw !important;
+      }
+    }
+  }
+}
+
+@include breakpoints(md) {
+  .form-model {
+    .modal-container {
+      form {
+        .section-item {
+          margin-bottom: 10px;
+          padding: 0 10px;
+          .input-field {
+            flex-direction: column;
+            align-items: start;
+            margin-top: 10px;
+            padding: 0 10px;
+            .form-label {
+              margin-right: 0;
+              text-align: start;
+              margin-bottom: 10px;
+              width: auto;
+            }
+            select,
+            input {
+              width: 100%;
+            }
+            .datetime-field {
+              width: 100%;
+              .datetime-item {
+                flex-direction: column;
+                align-items: start;
+                label {
+                  margin: 0;
+                }
+              }
+            }
+          }
+        }
+        .error-message {
+          margin: 0 20px 10px 20px;
+        }
+      }
+    }
+    .rodal {
+      .rodal-dialog {
+        width: 90vw !important;
+      }
     }
   }
 }
