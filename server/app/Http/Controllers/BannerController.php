@@ -25,18 +25,19 @@ class BannerController extends Controller
         // Check end conditions
         if($endDate <= $currentDateTime) {
             $campaign->status = 0;
-            return response()->json(['message' => 'Please choose end date after current date'],422);
+            // return response()->json(['message' => 'Please choose end date after current date'],422);
         }
         if ($remain <  $campaign->bid_amount) {
             $campaign->status = 0;
             $campaign->save();
-            return response()->json(['message' => 'Hết tiền', 422]);
+            return response()->json(['message' => 'Out of budget', 422]);
         }else {
             // Save the changes to the database
             $campaign->used_amount = $used_amount;
             $campaign->usage_rate = $usage_rate;
             $campaign->save();
-            return response()->json(['message' => $campaign]);
+            $campaigns = Campaign::with('creatives')->where('status', 1)->paginate(3);
+            return response()->json($campaigns);
         }
     }
 
