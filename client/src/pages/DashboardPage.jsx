@@ -35,7 +35,7 @@ const DashboardPage = () => {
   useEffect(() => {
     handleSearchAndFilter();
   }, [pageState.start_date, pageState.end_date, pageState.search_campaign]);
-
+  
   const fetchCampaign = async () => {
     try {
       const res = await api.get(

@@ -59,9 +59,11 @@ const AccountPage = () => {
       "timeoutId",
       setTimeout(async () => {
         try {
-          const res = await api.get(
-            `api/user/get?search_email=${e.target.value}`
-          );
+          const res = await api.get(`api/user/get`, {
+            params: {
+              search_email: e.target.value,
+            },
+          });
           handleChange("resData", res.data);
         } catch (error) {
           console.error(error);
