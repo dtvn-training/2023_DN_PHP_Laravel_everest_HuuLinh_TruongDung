@@ -44,15 +44,14 @@ const Banner = () => {
   };
 
   const createImpression = async (current) => {
-    if (pageState.resData.data.length > 1) {
-      const currentData = pageState.resData.data[current];
-      if (currentData) {
-        try {
-          const res = await api.get(`api/banner/impression/${currentData.id}`);
-          handleChange("resData", res.data);
-        } catch (error) {
-          console.error(error);
-        }
+    const currentData = pageState.resData.data[current];
+    if (currentData) {
+      try {
+        const res = await api.get(`api/banner/impression/${currentData.id}`);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        getAdBanner();
       }
     }
   };
