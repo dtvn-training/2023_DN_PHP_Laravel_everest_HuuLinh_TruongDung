@@ -9,6 +9,7 @@ import Pagination from "../components/Pagination";
 import DeleteModal from "../components/DeleteModal";
 import api from "../api/axios";
 import { toast } from "react-toastify";
+import { validateCreateCampaign, validateUpdateCampaign } from "../validators";
 
 const initState = {
   resData: {
@@ -148,36 +149,44 @@ const CampaignPage = () => {
   };
 
   const handleCreateCampaign = async (data) => {
-    let formData = new FormData();
-    Object.keys(data).forEach((key) => formData.append(key, data[key]));
-
-    try {
-      const res = await api.post("api/campaign/create", formData);
-      toast.success(res.data.message);
-      handleCloseForm("create");
-      fetchCampaign();
-    } catch (error) {
-      throw error;
+    const error = validateCreateCampaign(data);
+    if (error.length === 0) {
+      let formData = new FormData();
+      Object.keys(data).forEach((key) => formData.append(key, data[key]));
+      try {
+        const res = await api.post("api/campaign/create", formData);
+        toast.success(res.data.message);
+        handleCloseForm("create");
+        fetchCampaign();
+      } catch (error) {
+        throw error;
+      }
+    } else {
+      throw new Error(error[0]);
     }
   };
 
   const handleEditCampaign = async (data) => {
-    let formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (Array.isArray(data[key])) {
-        formData.append(key, JSON.stringify(data[key]));
-      } else {
-        formData.append(key, data[key]);
+    const error = validateUpdateCampaign(data);
+    if (error.length === 0) {
+      let formData = new FormData();
+      Object.keys(data).forEach((key) => {
+        if (Array.isArray(data[key])) {
+          formData.append(key, JSON.stringify(data[key]));
+        } else {
+          formData.append(key, data[key]);
+        }
+      });
+      try {
+        const res = await api.post(`api/campaign/update/${data.id}`, formData);
+        toast.success(res.data.message);
+        handleCloseForm("edit");
+        fetchCampaign();
+      } catch (error) {
+        throw error;
       }
-    });
-
-    try {
-      const res = await api.post(`api/campaign/update/${data.id}`, formData);
-      toast.success(res.data.message);
-      handleCloseForm("edit");
-      fetchCampaign();
-    } catch (error) {
-      throw error;
+    } else {
+      throw new Error(error[0]);
     }
   };
 
