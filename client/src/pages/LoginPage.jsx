@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "../assets/scss/pages/LoginPage.scss";
 import { useNavigate } from "react-router-dom";
-import { validateLoginForm } from "../validators";
 import api from "../api/axios";
 import Loading from "../components/Loading";
 
@@ -48,8 +47,6 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     const { email, password } = info;
-    const error = validateLoginForm(email, password);
-    if (error.length === 0) {
       try {
         const res = await api.post("/api/auth/login", { email, password });
         localStorage.setItem(
@@ -72,10 +69,6 @@ const LoginPage = () => {
       } finally {
         setIsLoading(false);
       }
-    } else {
-      setError(error[0]);
-      setIsLoading(false);
-    }
   };
 
   return isAuthLoading ? (
@@ -89,6 +82,7 @@ const LoginPage = () => {
         placeholder="Email"
         name="email"
         onChange={handleChange}
+        required
       />
       <input
         value={info.password}
@@ -96,6 +90,7 @@ const LoginPage = () => {
         placeholder="Password"
         name="password"
         onChange={handleChange}
+        required
       />
       {error && <p className="error-alert">{error}</p>}
       <button className="login-btn green" type="submit" disabled={isLoading}>

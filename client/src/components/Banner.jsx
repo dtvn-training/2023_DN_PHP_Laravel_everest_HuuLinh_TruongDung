@@ -15,6 +15,15 @@ const Banner = () => {
   const [pageState, setPageState] = useState(initState);
 
   useEffect(() => {
+    const getAdBannerFirstReload = async () => {
+      try {
+        const res = await api.get("/api/banner");
+        handleChange("resData", res.data);
+        await api.get(`api/banner/impression/${res.data.data[0].id}`);
+      } catch (error) {
+        console.error(error);
+      }
+    };
     getAdBannerFirstReload();
   }, []);
 
@@ -26,21 +35,6 @@ const Banner = () => {
       };
       return newState;
     });
-  };
-
-  const getAdBannerFirstReload = async () => {
-    try {
-      const res = await api.get("/api/banner");
-      handleChange("resData", res.data);
-      await api.get(`api/banner/impression/${res.data.data[0].id}`);
-    } catch (error) {}
-  };
-
-  const getAdBanner = async () => {
-    try {
-      const res = await api.get("/api/banner");
-      handleChange("resData", res.data);
-    } catch (error) {}
   };
 
   const createImpression = async (current) => {
@@ -69,9 +63,9 @@ const Banner = () => {
         autoplay={true}
         afterChange={createImpression}
       >
-        {pageState.resData.data.map((item, index) => {
+        {pageState.resData.data.map((item) => {
           return (
-            <div key={index} className="banner-container">
+            <div key={item.id} className="banner-container">
               <img src={item.creatives[0].preview_image} alt="" />
             </div>
           );

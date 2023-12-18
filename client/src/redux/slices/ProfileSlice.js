@@ -13,26 +13,18 @@ const initialState = {
 export const getProfile = createAsyncThunk(
   "profile/getProfile",
   async (_, { dispatch }) => {
-    try {
-      const res = await api.get("/api/auth/profile");
-      dispatch(profileReducer.actions.getProfile(res.data));
-    } catch (e) {
-      throw e;
-    }
+    const res = await api.get("/api/auth/profile");
+    dispatch(profileReducer.actions.getProfile(res.data));
   }
 );
 
 export const logout = createAsyncThunk(
   "profile/logout",
   async (_, { dispatch }) => {
-    try {
-      await api.post("/api/auth/logout");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      dispatch(profileReducer.actions.resetProfile());
-    } catch (e) {
-      console.error(e);
-    }
+    await api.post("/api/auth/logout");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    dispatch(profileReducer.actions.resetProfile());
   }
 );
 

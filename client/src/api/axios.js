@@ -55,7 +55,7 @@ function buildApi() {
             },
           }
         );
-        if (response.data && response.data.access_token) {
+        if (response.data?.access_token) {
           localStorage.setItem("accessToken", response.data.access_token);
           originalRequest.headers["Authorization"] = "Bearer " + getAccessToken();
           return instance(originalRequest);

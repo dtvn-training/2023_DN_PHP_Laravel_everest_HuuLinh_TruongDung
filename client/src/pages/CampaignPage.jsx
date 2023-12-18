@@ -10,6 +10,7 @@ import DeleteModal from "../components/DeleteModal";
 import api from "../api/axios";
 import { toast } from "react-toastify";
 import { validateCreateCampaign, validateUpdateCampaign } from "../validators";
+import { useNavigate } from "react-router-dom";
 
 const initState = {
   resData: {
@@ -43,14 +44,57 @@ const CampaignPage = () => {
     edit: false,
     delete: false,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchCampaign = async () => {
+      try {
+        const res = await api.get(
+          `api/campaign/get?page=${pageState.current_page}`
+        );
+        handleChange("resData", res.data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+          toast.error(error.response.data.message);
+        } else {
+          console.error(error);
+        }
+      }
+    };
     fetchCampaign();
-  }, [pageState.current_page]);
+  }, [pageState.current_page, navigate]);
 
   useEffect(() => {
+    const handleSearchAndFilter = async () => {
+      const timeoutId = pageState.timeoutId;
+
+      if (timeoutId) clearTimeout(timeoutId);
+
+      handleChange(
+        "timeoutId",
+        setTimeout(async () => {
+          try {
+            const res = await api.get(`api/campaign/get`, {
+              params: {
+                start_date: pageState.start_date,
+                end_date: pageState.end_date,
+                search_campaign: pageState.search_campaign,
+              },
+            });
+            handleChange("resData", res.data);
+          } catch (error) {
+            if (error.response && error.response.status === 401) {
+              navigate("/");
+              toast.error(error.response.data.message);
+            }
+            console.error(error);
+          }
+        }, 500)
+      );
+    };
     handleSearchAndFilter();
-  }, [pageState.start_date, pageState.end_date, pageState.search_campaign]);
+  }, [pageState.start_date, pageState.end_date, pageState.search_campaign, navigate]);
 
   const fetchCampaign = async () => {
     try {
@@ -119,48 +163,15 @@ const CampaignPage = () => {
     handleOpenForm("delete");
   };
 
-  const handleSearchAndFilter = async () => {
-    const timeoutId = pageState.timeoutId;
-
-    if (timeoutId) clearTimeout(timeoutId);
-
-    handleChange(
-      "timeoutId",
-      setTimeout(async () => {
-        try {
-          const res = await api.get(`api/campaign/get`, {
-            params: {
-              start_date: pageState.start_date,
-              end_date: pageState.end_date,
-              search_campaign: pageState.search_campaign,
-            },
-          });
-          handleChange("resData", res.data);
-        } catch (error) {
-          if (error.response && error.response.status === 401) {
-            navigate("/");
-            toast.error(error.response.data.message);
-          } else {
-            console.error(error);
-          }
-        }
-      }, 500)
-    );
-  };
-
   const handleCreateCampaign = async (data) => {
     const error = validateCreateCampaign(data);
     if (error.length === 0) {
       let formData = new FormData();
       Object.keys(data).forEach((key) => formData.append(key, data[key]));
-      try {
-        const res = await api.post("api/campaign/create", formData);
-        toast.success(res.data.message);
-        handleCloseForm("create");
-        fetchCampaign();
-      } catch (error) {
-        throw error;
-      }
+      const res = await api.post("api/campaign/create", formData);
+      toast.success(res.data.message);
+      handleCloseForm("create");
+      fetchCampaign();
     } else {
       throw new Error(error[0]);
     }
@@ -177,30 +188,22 @@ const CampaignPage = () => {
           formData.append(key, data[key]);
         }
       });
-      try {
-        const res = await api.post(`api/campaign/update/${data.id}`, formData);
-        toast.success(res.data.message);
-        handleCloseForm("edit");
-        fetchCampaign();
-      } catch (error) {
-        throw error;
-      }
+      const res = await api.post(`api/campaign/update/${data.id}`, formData);
+      toast.success(res.data.message);
+      handleCloseForm("edit");
+      fetchCampaign();
     } else {
       throw new Error(error[0]);
     }
   };
 
   const handleDeleteCampaign = async () => {
-    try {
-      const res = await api.get(
-        `api/campaign/delete/${pageState.currentCampaign.id}`
-      );
-      toast.success(res.data.message);
-      handleCloseForm("delete");
-      fetchCampaign();
-    } catch (error) {
-      throw error;
-    }
+    const res = await api.get(
+      `api/campaign/delete/${pageState.currentCampaign.id}`
+    );
+    toast.success(res.data.message);
+    handleCloseForm("delete");
+    fetchCampaign();
   };
 
   return (
@@ -276,9 +279,9 @@ const CampaignPage = () => {
             </tr>
           </thead>
           <tbody>
-            {pageState.resData.data.map((campaign, index) => {
+            {pageState.resData.data.map((campaign) => {
               return (
-                <tr key={index}>
+                <tr key={campaign.id}>
                   <td>
                     <div className="double-item-cell">
                       <div className="img-container">

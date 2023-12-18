@@ -2,6 +2,7 @@ import Rodal from "rodal";
 import "rodal/lib/rodal.css";
 import "../assets/scss/components/ModalForm.scss";
 import { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
 
 const initFormData = {
   start_date: new Date().toISOString().substring(0, 16),
@@ -48,7 +49,7 @@ const ModalForm = ({
       await customFunction(formData);
       handleCloseForm();
     } catch (error) {
-      if (error.response && error.response.status) {
+      if (error.response?.status) {
         let errors = error.response.data;
         let firstKey = Object.keys(errors)[0];
         let firstError = errors[firstKey][0];
@@ -90,9 +91,7 @@ const ModalForm = ({
                               name={content.name}
                               required
                               value={
-                                formData && formData[content.name] !== undefined
-                                  ? formData[content.name]
-                                  : content.default
+                                formData?.[content.name] ?? content.default
                               }
                               onChange={handleFieldChange}
                             />
@@ -116,11 +115,7 @@ const ModalForm = ({
                             onChange={handleFieldChange}
                             name={content.name}
                             required
-                            value={
-                              formData && formData[content.name] !== undefined
-                                ? formData[content.name]
-                                : content.default
-                            }
+                            value={formData?.[content.name] ?? content.default}
                           >
                             {content.options.map((option, i) => (
                               <option key={i} value={option.value}>
@@ -139,9 +134,8 @@ const ModalForm = ({
                             />
                             <img
                               src={
-                                formData && formData[content.name] !== undefined
-                                  ? URL.createObjectURL(formData[content.name])
-                                  : content.default
+                                URL.createObjectURL(formData?.[content.name]) ??
+                                content.default
                               }
                             />
                           </div>
@@ -178,6 +172,15 @@ const ModalForm = ({
       </Rodal>
     </div>
   );
+};
+
+ModalForm.propTypes = {
+  title: PropTypes.string.isRequired,
+  visible: PropTypes.bool.isRequired,
+  setVisible: PropTypes.func.isRequired,
+  customFunction: PropTypes.func.isRequired,
+  formField: PropTypes.array.isRequired,
+  defaultFormValue: PropTypes.object,
 };
 
 export default ModalForm;

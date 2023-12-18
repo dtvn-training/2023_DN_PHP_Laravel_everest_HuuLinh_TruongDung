@@ -7,7 +7,7 @@ import { createUserFormField, editUserFormField } from "../utils/userForm";
 import DeleteModal from "../components/DeleteModal";
 import DownloadCSVButton from "../components/DownLoadCSVButton";
 import { useNavigate } from "react-router-dom";
-import { validateCreateAccountForm } from "../validators";
+import { validateCreateAccountForm, validateEditAccount } from "../validators";
 import Loading from "../components/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import { profile } from "../redux/selector";
@@ -47,8 +47,25 @@ const AccountPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const fetchUser = async () => {
+      handleChange("loading", true);
+      try {
+        const res = await api.get(
+          `api/user/get?page=${pageState.current_page}`
+        );
+        handleChange("resData", res.data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          navigate("/");
+          toast.error(error.response.data.message);
+        } else {
+          console.error(error);
+        }
+      }
+      handleChange("loading", false);
+    };
     fetchUser();
-  }, [pageState.current_page]);
+  }, [pageState.current_page, navigate]);
 
   const handleSearchChange = (e) => {
     const timeoutId = pageState.timeoutId;
@@ -70,6 +87,22 @@ const AccountPage = () => {
         }
       }, 500)
     );
+  };
+
+  const fetchUser = async () => {
+    handleChange("loading", true);
+    try {
+      const res = await api.get(`api/user/get?page=${pageState.current_page}`);
+      handleChange("resData", res.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/");
+        toast.error(error.response.data.message);
+      } else {
+        console.error(error);
+      }
+    }
+    handleChange("loading", false);
   };
 
   const getRole = (role_id) => {
@@ -102,7 +135,7 @@ const AccountPage = () => {
     handleChange("currentUser", data);
     editUserFormField[0].contents = editUserFormField[0].contents.map(
       (content) => {
-        if (data.hasOwnProperty(content.name)) {
+        if (Object.hasOwn(data, content.name)) {
           return { ...content, default: data[content.name] };
         }
         return content;
@@ -116,46 +149,24 @@ const AccountPage = () => {
     handleOpenForm("delete");
   };
 
-  const fetchUser = async () => {
-    handleChange("loading", true);
-    try {
-      const res = await api.get(`api/user/get?page=${pageState.current_page}`);
-      handleChange("resData", res.data);
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        navigate("/");
-        toast.error(error.response.data.message);
-      } else {
-        console.error(error);
-      }
-    }
-    handleChange("loading", false);
-  };
-
   const handleCreateAccount = async (data) => {
-    const error = validateCreateAccountForm(
-      data.password,
-      data.confirm_password
-    );
+    const error = validateCreateAccountForm(data);
     if (error.length === 0) {
-      try {
-        const res = await api.post("api/user/create", data);
-        toast.success(res.data.message);
-        handleCloseForm("create");
-        fetchUser();
-      } catch (error) {
-        throw error;
-      }
+      const res = await api.post("api/user/create", data);
+      toast.success(res.data.message);
+      handleCloseForm("create");
+      fetchUser();
     } else {
       throw new Error(error[0]);
     }
   };
 
   const handleEditAccount = async (data) => {
-    if (data.email === pageState.currentUser.email) {
-      delete data.email;
-    }
-    try {
+    const error = validateEditAccount(data);
+    if (error.length === 0) {
+      if (data.email === pageState.currentUser.email) {
+        delete data.email;
+      }
       const res = await api.post(
         `api/user/update/${pageState.currentUser.id}`,
         data
@@ -164,20 +175,16 @@ const AccountPage = () => {
       handleCloseForm("edit");
       if (data.id === currentUser.id) await dispatch(getProfile()).unwrap();
       await fetchUser();
-    } catch (error) {
-      throw error;
+    } else {
+      throw new Error(error[0]);
     }
   };
 
   const handleDeleteAccount = async () => {
-    try {
-      const res = await api.get(`api/user/delete/${pageState.currentUser.id}`);
-      toast.success(res.data.message);
-      handleCloseForm("delete");
-      fetchUser();
-    } catch (error) {
-      throw error;
-    }
+    const res = await api.get(`api/user/delete/${pageState.currentUser.id}`);
+    toast.success(res.data.message);
+    handleCloseForm("delete");
+    fetchUser();
   };
 
   return (
@@ -237,9 +244,9 @@ const AccountPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {pageState.resData.data.map((user, index) => {
+                {pageState.resData.data.map((user) => {
                   return (
-                    <tr key={index}>
+                    <tr key={user.id}>
                       <td>{user.id}</td>
                       <td className="break-word">
                         {user.first_name + " " + user.last_name}
