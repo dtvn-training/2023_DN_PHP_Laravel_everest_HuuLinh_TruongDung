@@ -1,4 +1,5 @@
 @import '../Variables.scss';
+@import '../BreakPoints.scss';
 
 $border-radius: 5px;
 .login-form {
@@ -67,7 +68,7 @@ $border-radius: 5px;
   
 }
 @media only screen and (max-width: 600px) {
-  form{
+  .login-form{
     width: 100%;
     min-width: 0;
     margin: 0;
@@ -80,7 +81,7 @@ $border-radius: 5px;
  
 }
 @media only screen and (max-width: 300px) {
-  form{
+  .login-form{
     .login-option{
       flex-direction: column;
       button{

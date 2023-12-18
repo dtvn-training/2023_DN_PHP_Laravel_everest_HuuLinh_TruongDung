@@ -6,22 +6,23 @@ import { useDispatch } from "react-redux";
 import "../assets/scss/layouts/Page.scss";
 import Banner from "../components/Banner";
 import { getProfile } from "../redux/slices/ProfileSlice";
+import PropTypes from 'prop-types';
 
 const DefaultLayout = ({ children }) => {
-  const [isLoading, setIsloading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
-      setIsloading(true);
+      setLoading(true);
       try {
         await dispatch(getProfile()).unwrap();
       } catch (e) {
         console.error(e);
         navigate("/login");
       } finally {
-        setIsloading(false);
+        setLoading(false);
       }
     };
     fetchCurrentUser();
@@ -29,7 +30,7 @@ const DefaultLayout = ({ children }) => {
 
   return (
     <>
-      {isLoading ? (
+      {loading ? (
         <h1>Loading...</h1>
       ) : (
         <>
@@ -44,5 +45,9 @@ const DefaultLayout = ({ children }) => {
     </>
   );
 };
+
+DefaultLayout.propTypes={
+  children: PropTypes.node.isRequired
+}
 
 export default DefaultLayout;

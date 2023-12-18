@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import Pagination from "../components/Pagination";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const initState = {
   resData: {
@@ -27,25 +29,51 @@ const initState = {
 
 const DashboardPage = () => {
   const [pageState, setPageState] = useState(initState);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchCampaign = async () => {
+      try {
+        const res = await api.get(
+          `api/campaign/get?page=${pageState.current_page}`
+        );
+        handleChange("resData", res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
     fetchCampaign();
   }, [pageState.current_page]);
 
   useEffect(() => {
-    handleSearchAndFilter();
-  }, [pageState.start_date, pageState.end_date, pageState.search_campaign]);
-  
-  const fetchCampaign = async () => {
-    try {
-      const res = await api.get(
-        `api/campaign/get?page=${pageState.current_page}`
+    const handleSearchAndFilter = async () => {
+      if (pageState.timeoutId) clearTimeout(pageState.timeoutId);
+
+      handleChange(
+        "timeoutId",
+        setTimeout(async () => {
+          try {
+            const res = await api.get(`api/campaign/get`, {
+              params: {
+                start_date: pageState.start_date,
+                end_date: pageState.end_date,
+                search_campaign: pageState.search_campaign,
+              },
+            });
+            handleChange("resData", res.data);
+          } catch (error) {
+            if (error.response && error.response.status === 401) {
+              navigate("/");
+              toast.error(error.response.data.message);
+            } else {
+              console.error(error);
+            }
+          }
+        }, 500)
       );
-      handleChange("resData", res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
+    handleSearchAndFilter();
+  }, [pageState.start_date, pageState.end_date, pageState.search_campaign, navigate]);
 
   const handleChange = (name, value) => {
     setPageState((prevState) => ({
@@ -54,37 +82,7 @@ const DashboardPage = () => {
     }));
   };
 
-  const handleSearchAndFilter = async () => {
-    const timeoutId = pageState.timeoutId;
-
-    if (timeoutId) clearTimeout(timeoutId);
-
-    handleChange(
-      "timeoutId",
-      setTimeout(async () => {
-        try {
-          const res = await api.get(`api/campaign/get`, {
-            params: {
-              start_date: pageState.start_date,
-              end_date: pageState.end_date,
-              search_campaign: pageState.search_campaign,
-            },
-          });
-          handleChange("resData", res.data);
-        } catch (error) {
-          if (error.response && error.response.status === 401) {
-            navigate("/");
-            toast.error(error.response.data.message);
-          } else {
-            console.error(error);
-          }
-        }
-      }, 500)
-    );
-  };
-
   return (
-    <>
       <div className="page-container">
         <div className="control-bar">
           <div className="left-control">
@@ -128,9 +126,9 @@ const DashboardPage = () => {
               </tr>
             </thead>
             <tbody>
-              {pageState.resData.data.map((campaign, index) => {
+              {pageState.resData.data.map((campaign) => {
                 return (
-                  <tr key={index}>
+                  <tr key={campaign.id}>
                     <td>
                       <div className="double-item-cell">
                         <div className="img-container">
@@ -171,7 +169,6 @@ const DashboardPage = () => {
           />
         )}
       </div>
-    </>
   );
 };
 

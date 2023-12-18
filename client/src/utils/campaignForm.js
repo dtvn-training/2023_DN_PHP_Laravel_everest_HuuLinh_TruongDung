@@ -103,7 +103,6 @@ let editCampaignFormField = [
       {
         label: "User status",
         type: "select",
-        default: 1,
         options: [
           { label: "Active", value: "1" },
           { label: "Inactive", value: "0" },

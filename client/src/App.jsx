@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   return (
-    <>
       <div className="container">
         <ToastContainer
           position="top-right"
@@ -23,20 +22,20 @@ const App = () => {
         />
         <React.Suspense fallback={<h1>Loading...</h1>}>
           <Routes>
-            {publicRoutes.map((route, index) => (
+            {publicRoutes.map((route) => (
               <Route
                 path={route.path}
-                key={index}
+                key={route.path}
                 element={<route.component />}
               />
             ))}
-            {privateRoutes.map((route, index) => {
+            {privateRoutes.map((route) => {
               const Layout = DefaultLayout || route.layout;
               const Page = route.component;
               return (
                 <Route
                   path={route.path}
-                  key={index}
+                  key={route.path}
                   element={
                     <Layout>
                       <Page />
@@ -48,7 +47,6 @@ const App = () => {
           </Routes>
         </React.Suspense>
       </div>
-    </>
   );
 };
 
