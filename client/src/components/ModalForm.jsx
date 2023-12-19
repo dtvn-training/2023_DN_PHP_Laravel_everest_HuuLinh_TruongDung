@@ -74,56 +74,59 @@ const ModalForm = ({
           <h2>{title}</h2>
           <form onSubmit={handleFormSubmit} ref={formRef}>
             {formField.map((d, i) => {
-              return d.type === "time_range" ? (
-                <div className="section-item" key={i}>
-                  <div className="section-header">{d.section_title}</div>
-                  <div className="input-field">
-                    <label className="form-label">
-                      {d.section_title + ":"}
-                    </label>
-                    <div className="datetime-field">
-                      {d.contents.map((content, i) => {
-                        return (
-                          <div className="datetime-item" key={i}>
-                            <label htmlFor="">{content.label}</label>
-                            <input
-                              type={content.type}
-                              name={content.name}
-                              required
-                              value={
-                                formData?.[content.name] ?? content.default
-                              }
-                              onChange={handleFieldChange}
-                            />
-                          </div>
-                        );
-                      })}
+              let sectionItem;
+              if (d.type === "time_range") {
+                sectionItem = (
+                  <div className="section-item" key={i}>
+                    <div className="section-header">{d.section_title}</div>
+                    <div className="input-field">
+                      <label className="form-label">
+                        {d.section_title + ":"}
+                      </label>
+                      <div className="datetime-field">
+                        {d.contents.map((content, i) => {
+                          return (
+                            <div className="datetime-item" key={i}>
+                              <label htmlFor="">{content.label}</label>
+                              <input
+                                type={content.type}
+                                name={content.name}
+                                required
+                                value={
+                                  formData?.[content.name] ?? content.default
+                                }
+                                onChange={handleFieldChange}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div className="section-item" key={i}>
-                  <div className="section-header">{d.section_title}</div>
-                  {d.contents.map((content, index) => {
-                    return (
-                      <div className="input-field" key={index}>
-                        <label className="form-label">
-                          {content.label + ":"}
-                        </label>
-                        {content.type === "select" ? (
+                );
+              } else {
+                sectionItem = (
+                  <div className="section-item" key={i}>
+                    <div className="section-header">{d.section_title}</div>
+                    {d.contents.map((content, index) => {
+                      let inputField;
+                      if (content.type === "select") {
+                        inputField = (
                           <select
                             onChange={handleFieldChange}
                             name={content.name}
                             required
                             value={formData?.[content.name] ?? content.default}
                           >
-                            {content.options.map((option, i) => (
-                              <option key={i} value={option.value}>
+                            {content.options.map((option) => (
+                              <option key={option.label} value={option.value}>
                                 {option.label}
                               </option>
                             ))}
                           </select>
-                        ) : content.type === "image" ? (
+                        );
+                      } else if (content.type === "image") {
+                        inputField = (
                           <div className="img-container">
                             <input
                               type="file"
@@ -134,12 +137,15 @@ const ModalForm = ({
                             />
                             <img
                               src={
-                                URL.createObjectURL(formData?.[content.name]) ??
-                                content.default
+                                formData?.[content.name]
+                                  ? URL.createObjectURL(formData[content.name])
+                                  : content.default
                               }
                             />
                           </div>
-                        ) : (
+                        );
+                      } else {
+                        inputField = (
                           <input
                             type={content.type}
                             placeholder={content.placeholder}
@@ -151,13 +157,23 @@ const ModalForm = ({
                             }
                             autoComplete="on"
                           />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
+                        );
+                      }
+                      return (
+                        <div className="input-field" key={index}>
+                          <label className="form-label">
+                            {content.label + ":"}
+                          </label>
+                          {inputField}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              }
+              return sectionItem;
             })}
+
             {error && <p className="error-message">{error}</p>}
             <div className="modal-control-bar">
               <button type="button" onClick={handleCloseForm}>
