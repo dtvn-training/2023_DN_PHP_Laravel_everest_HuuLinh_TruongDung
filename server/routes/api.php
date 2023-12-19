@@ -21,7 +21,7 @@ use App\Http\Controllers\BannerController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::group(['middleware'=>'api', 'prefix' => 'auth'],function($router){
+Route::group(['middleware'=>'api', 'prefix' => 'auth'],function(){
     Route::post('/register',[AuthController::class,'register']);
     Route::post('/login',[AuthController::class,'login']);
     Route::get('/profile',[AuthController::class,'profile']);
@@ -29,18 +29,14 @@ Route::group(['middleware'=>'api', 'prefix' => 'auth'],function($router){
     Route::post('/refresh',[AuthController::class,'refreshToken']);
 });
 
-// Route::group(['middleware'=>'api', 'prefix' => 'user'],function($router){
-//     Route::post('/create',[UserController::class,'createUser']);
-// });
-
 // ADMIN
-Route::group(['middleware' => ['api', 'role_id:2,3'], 'prefix' => 'user'], function ($router) {
+Route::group(['middleware' => ['api', 'role_id:2,3'], 'prefix' => 'user'], function () {
     Route::get('/get',[UserController::class,'index']);
     Route::post('/create',[UserController::class,'createUser']);
     Route::post('/update/{id}',[UserController::class,'editUser']);
     Route::get('/delete/{id}',[UserController::class,'deleteUser']);
 });
-Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], function ($router) {
+Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], function () {
     Route::get('/get',[CampaignController::class,'index']);
     Route::post('/create',[CampaignController::class,'createCampaign']);
     Route::post('/update/{id}',[CampaignController::class,'updateCampaign']);
@@ -49,13 +45,10 @@ Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'campaign'], fun
 });
 
 //Banner
-Route::group(['middleware' => ['api'], 'prefix' => 'banner'], function ($router) {
+Route::group(['middleware' => ['api'], 'prefix' => 'banner'], function () {
     Route::get('/',[BannerController::class,'getBanner']);
     Route::get('/impression/{id}',[BannerController::class,'impression']);
 });
-
-// Route::group(['middleware' => ['api', 'role_id:3'], 'prefix' => 'banner'], function ($router) {
-// });
 
 // DAC Account
 // Route::group(['middleware' => ['api', 'role_id:2'], 'prefix' => 'user'], function ($router) {

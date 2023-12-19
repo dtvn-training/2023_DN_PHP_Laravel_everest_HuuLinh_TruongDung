@@ -30,7 +30,30 @@ class CampaignController extends Controller
     public function updateCampaign(Request $request, $id)
     {
         $currentUser = Auth::user();
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), $this->getValidationRules($request));
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $campaign = Campaign::find($id);
+        if (!$campaign) {
+            return response()->json(['message' => "Campaign not found"], 404);
+        }
+
+        $campaignData = $this->prepareCampaignData($request, $currentUser, $campaign);
+
+        $this->updateCampaignStatus($request, $campaign, $campaignData);
+
+        $campaign->update($campaignData);
+
+        $this->updateCreatives($request, $campaign);
+
+        return response()->json(['message' => 'Update campaign and creatives successfully']);
+    }
+    private function getValidationRules(Request $request)
+    {
+        return [
             'campaign_name' => 'required|max:50',
             'status' => 'required|in:1,0', //1:active 0: inactive
             'budget' => [
@@ -46,13 +69,13 @@ class CampaignController extends Controller
                 },
             ],
             'bid_amount' => 'required|numeric|min:1|max:1000000000',
-            'start_date' => 'required', 'date', 'after_or_equal:today',
+            'start_date' => 'required|date|after_or_equal:today',
             'end_date' => [
                 'required',
                 'date',
                 function ($attribute, $value, $fail) use ($request) {
-                    $startDate = Carbon::parse($request->input('start_date'), 'Asia/Ho_Chi_Minh')->startOfDay();
-                    $endDate = Carbon::parse($value, 'Asia/Ho_Chi_Minh')->startOfDay();
+                    $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+                    $endDate = Carbon::parse($value)->startOfDay();
 
                     if ($endDate->eq($startDate)) {
                         $request->merge(['status' => 0]);
@@ -64,18 +87,10 @@ class CampaignController extends Controller
             ],
             'creative_name' => 'max:50',
             'description' => 'max:100',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $campaign = Campaign::find($id);
-        if (!$campaign) {
-            return response()->json(['message' => "Campaign not found"], 404);
-        }
-
-        // Update Campaign
+        ];
+    }
+    private function prepareCampaignData(Request $request, $currentUser, $campaign)
+    {
         $campaignData = $request->only([
             'campaign_name',
             'status',
@@ -84,26 +99,25 @@ class CampaignController extends Controller
             'start_date',
             'end_date',
         ]);
+
         $campaignData['user_updated'] = $currentUser->id;
         $campaignData['usage_rate'] = ($campaignData['bid_amount'] / $campaignData['budget']) * 100;
 
-        // Check if the status is being updated
+        return $campaignData;
+    }
+    private function updateCampaignStatus(Request $request, Campaign $campaign, array &$campaignData)
+    {
         $newStatus = $request->input('status');
         if ($newStatus !== $campaign->status) {
-            // Status is being updated, save it to the database
             $campaign->status = $newStatus;
             $campaign->save();
         } else {
-            if ($campaignData['budget'] > 0 && $campaign->used_amount < $campaignData['budget']) {
-                $campaignData['status'] = 1; // Active
-            } else {
-                $campaignData['status'] = 0; // Inactive
-            }
+            $campaignData['status'] = ($campaignData['budget'] > 0
+            && $campaign->used_amount < $campaignData['budget']) ? 1 : 0;
         }
-
-        $campaign->update($campaignData);
-
-        // Update Creatives
+    }
+    private function updateCreatives(Request $request, Campaign $campaign)
+    {
         $creativesData = $request->only([
             'creative_name',
             'final_url',
@@ -112,29 +126,29 @@ class CampaignController extends Controller
         ]);
 
         if ($request->has('preview_image')) {
-            $uploadedFileUrl = Cloudinary::upload(
-                $request->file('preview_image')->getRealPath(),
-                [
-                    'verify' => false,
-                ]
-            )->getSecurePath();
-            $creativesData['preview_image'] = $uploadedFileUrl;
-            // Delete old images from the database
-            foreach ($campaign->creatives as $creative) {
-                $publicId = pathinfo($creative->preview_image, PATHINFO_FILENAME);
-                Cloudinary::destroy($publicId);
-            }
+            $this->handleImageUpload($request, $creativesData, $campaign);
         }
 
-        // Loop through all creatives and update data
         foreach ($campaign->creatives as $creative) {
             $creative->update($creativesData);
         }
-
-        return response()->json(['message' => 'Update campaign and creatives successfully']);
     }
+    private function handleImageUpload(Request $request, array &$creativesData, Campaign $campaign)
+    {
+        $uploadedFileUrl = Cloudinary::upload(
+            $request->file('preview_image')->getRealPath(),
+            [
+                'verify' => false,
+            ]
+        )->getSecurePath();
+        $creativesData['preview_image'] = $uploadedFileUrl;
 
-
+        // Delete old images from the database
+        foreach ($campaign->creatives as $creative) {
+            $publicId = pathinfo($creative->preview_image, PATHINFO_FILENAME);
+            Cloudinary::destroy($publicId);
+        }
+    }
     public function createCampaign(Request $request)
     {
         $currentUser = Auth::user();
@@ -219,7 +233,6 @@ class CampaignController extends Controller
 
         return response()->json(['message' => 'Create campaign successfully']);
     }
-
     public function index(Request $request)
     {
         try {
