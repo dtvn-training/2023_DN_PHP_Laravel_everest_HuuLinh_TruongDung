@@ -1,0 +1,211 @@
+@import "../Variables.scss";
+@import "../Mixins.scss";
+@import "../BreakPoints.scss";
+
+.form-model {
+  .modal-container {
+    h2 {
+      border-bottom: 1px solid $main-border-color;
+      padding: 10px 20px;
+    }
+    form {
+      padding: 10px 0;
+      overflow-y: auto;
+      max-height: 85vh;
+      .section-item {
+        padding: 0 20px;
+        margin-bottom: 20px;
+        .section-header {
+          color: $light-text-color;
+          background: $main-bg-color;
+          padding: 10px 20px;
+          border-top-right-radius: $main-border-radius;
+          border-top-left-radius: $main-border-radius;
+        }
+        .input-field {
+          margin-top: 20px;
+          display: flex;
+          align-items: center;
+          padding: 0 20px;
+          .form-label {
+            text-align: right;
+            margin-right: 50px;
+            width: 20%;
+            font-weight: bold;
+            font-size: 14px;
+          }
+          input,
+          select {
+            flex: 1;
+            padding: 10px;
+          }
+          .img-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            border: 1px solid $main-border-color;
+            height: 200px;
+            position: relative;
+            padding: 10px;
+            input[type="file"] {
+              display: none;
+              cursor: pointer;
+              background: $main-bg-color;
+              height: 50px;
+            }
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+            &:hover {
+              input {
+                display: flex;
+                align-items: center;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+              }
+            }
+          }
+          .datetime-field {
+            width: 514px;
+            display: flex;
+            .datetime-item {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              width: 50%;
+              label {
+                font-size: 14px;
+                font-weight: bold;
+                margin: 0 10px;
+              }
+              input {
+                border: none;
+                border-bottom: 1px solid $main-border-color;
+                outline: none;
+              }
+            }
+          }
+        }
+      }
+      .error-message {
+        font-size: 14px;
+        color: #ff0000;
+        background: #ffb8b8;
+        padding: 10px;
+        margin: 0 40px;
+        border-radius: $main-border-radius;
+        border: 1px solid #ff0000;
+        margin-bottom: 10px;
+      }
+      .modal-control-bar {
+        border-top: 1px solid $main-border-color;
+        padding-top: 10px;
+        text-align: end;
+        button {
+          margin-right: 20px;
+          padding: 10px 40px;
+          background: none;
+          border: 1px solid $main-border-color;
+        }
+        .save-btn {
+          @include buttonStyle();
+          border: 1px solid $main-bg-color;
+          padding: 10px 40px;
+        }
+      }
+    }
+  }
+  .rodal {
+    .rodal-dialog {
+      width: 800px !important;
+      height: fit-content !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+@include breakpoints(lg) {
+  .form-model {
+    .modal-container {
+      form {
+        .section-item {
+          .input-field {
+            .datetime-field {
+              flex-direction: column;
+              justify-content: center;
+              width: auto;
+              flex: 1;
+              .datetime-item {
+                width: auto;
+                flex: 1;
+                margin-bottom: 10px;
+                label {
+                  width: 65px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .rodal {
+      .rodal-dialog {
+        width: 90vw !important;
+      }
+    }
+  }
+}
+
+@include breakpoints(md) {
+  .form-model {
+    .modal-container {
+      form {
+        .section-item {
+          margin-bottom: 10px;
+          padding: 0 10px;
+          .input-field {
+            flex-direction: column;
+            align-items: start;
+            margin-top: 10px;
+            padding: 0 10px;
+            .form-label {
+              margin-right: 0;
+              text-align: start;
+              margin-bottom: 10px;
+              width: auto;
+            }
+            select,
+            input {
+              width: 100%;
+            }
+            .datetime-field {
+              width: 100%;
+              .datetime-item {
+                flex-direction: column;
+                align-items: start;
+                label {
+                  margin: 0;
+                }
+              }
+            }
+          }
+        }
+        .error-message {
+          margin: 0 20px 10px 20px;
+        }
+      }
+    }
+    .rodal {
+      .rodal-dialog {
+        width: 90vw !important;
+      }
+    }
+  }
+}

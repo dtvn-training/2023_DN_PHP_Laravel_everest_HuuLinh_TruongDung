@@ -1,64 +1,56 @@
 import validator from "validator";
 
-export const validateName = (name) => {
-  if (name === "") {
-    return "Please input name";
-  } else {
-    return "";
-  }
+const validateEmail = ({ email }) => {
+  if (!email) return "Please input email";
+  if (!validator.isEmail(email)) return "Invalid email";
+  return "";
 };
 
-export const validateEmail = (email) => {
-  if (email === "") {
-    return "Please input email";
-  } else if (!validator.isEmail(email)) {
-    return "Invalid email";
-  } else {
-    return "";
-  }
+const validatePassword = ({ password }) => {
+  if (!password) return "Please input password";
+  if (!validator.isStrongPassword(password)) return "Password is too weak";
+  return "";
 };
 
-export const validatePassword = (password) => {
-  if (password === "") {
-    return "Please input password";
-  } else {
-    return "";
-  }
+const validateTimeRange = ({ start_date, end_date }) => {
+  if (start_date > end_date) return "Start date must be before end date";
+  return "";
 };
-export const validatePasswordConfirmation = (password, passwordConfirm) => {
-  if (password !== passwordConfirm) {
-    return "Those passwords did not match. Try again.";
-  } else {
-    return "";
-  }
-};
-export const validateRegisterForm = (
-  name,
-  email,
+
+export const validatePasswordConfirmation = ({
   password,
-  passwordConfirm
-) => {
-  const nameError = validateName(name);
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
-  const passwordConfirmError = validatePasswordConfirmation(
-    password,
-    passwordConfirm
-  );
-  return {
-    nameError,
-    emailError,
-    passwordError,
-    passwordConfirmError,
-  };
+  confirm_password,
+}) => {
+  if (password !== confirm_password) return "Confirm password does not match";
+  return "";
 };
 
-export const validateLoginForm = (email, password) => {
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
+export const validateCreateAccountForm = (data) => {
+  const errors = [
+    validateEmail(data),
+    validatePassword(data),
+    validatePasswordConfirmation(data),
+  ].filter(Boolean);
+  return errors;
+};
 
-  return {
-    emailError,
-    passwordError,
-  };
+export const validateEditAccount = (data) => {
+  const errors = [validateEmail(data)].filter(
+    Boolean
+  );
+  return errors;
+};
+
+export const validateCreateCampaign = (data) => {
+  const errors = [validateTimeRange(data)].filter(
+    Boolean
+  );
+  return errors;
+};
+
+export const validateUpdateCampaign = (data) => {
+  const errors = [validateTimeRange(data)].filter(
+    Boolean
+  );
+  return errors;
 };

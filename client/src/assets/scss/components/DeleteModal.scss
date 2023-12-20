@@ -1,0 +1,58 @@
+@import "../Variables.scss";
+@import "../BreakPoints.scss";
+
+.delete-modal {
+  .modal-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    h2 {
+      padding: 10px 20px;
+      border-bottom: 1px solid $main-border-color;
+    }
+    p {
+      font-weight: bold;
+      padding: 40px 20px;
+    }
+    .delete-control-bar {
+      border-top: 1px solid $main-border-color;
+      text-align: end;
+      padding: 10px 20px;
+      button {
+        margin-left: 10px;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-weight: bold;
+        border: none;
+      }
+      .cancel-btn {
+        background: transparent;
+        color: #1a1a1a;
+        border: 1px solid #1a1a1a;
+      }
+      .delete-btn {
+        color: #fff;
+        background: #d90000;
+        border-radius: $main-border-radius;
+      }
+    }
+  }
+  .rodal {
+    .rodal-dialog {
+      width: 700px !important;
+      height: fit-content !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+@include breakpoints(md) {
+  .delete-modal {
+    .rodal {
+      .rodal-dialog {
+        width: 90vw !important;
+      }
+    }
+  }
+}

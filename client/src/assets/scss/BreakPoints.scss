@@ -1,0 +1,18 @@
+$breakpoint: (
+  "xs": 0,
+  "sm": "max-width: 480px",
+  "md": "max-width: 750px",
+  "lg": "max-width: 960px",
+  "xl": "max-width: 1200px",
+);
+
+@mixin breakpoints($user-value) {
+  $my-map: map-get($breakpoint, $user-value);
+  @if $my-map {
+    @media (#{$my-map}) {
+      @content;
+    }
+  } @else {
+    @error "Undefined breakpoint #{$user-value}";
+  }
+}

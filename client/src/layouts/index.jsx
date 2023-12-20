@@ -1,50 +1,53 @@
-import api from "../api/axios";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { profileReducer } from "../redux/slices/ProfileSlice";
+import { useDispatch } from "react-redux";
+import "../assets/scss/layouts/Page.scss";
+import Banner from "../components/Banner";
+import { getProfile } from "../redux/slices/ProfileSlice";
+import PropTypes from 'prop-types';
 
 const DefaultLayout = ({ children }) => {
-  const [isLoading, setIsloading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getProfile = async () => {
-      setIsloading(true);
+    const fetchCurrentUser = async () => {
+      setLoading(true);
       try {
-        const res = await api.get("/api/auth/profile");
-        if (res.data.id) {
-          dispatch(profileReducer.actions.getProfile(res.data));
-        } else {
-          navigate("/login");
-        }
+        await dispatch(getProfile()).unwrap();
       } catch (e) {
         console.error(e);
         navigate("/login");
+      } finally {
+        setLoading(false);
       }
-      setIsloading(false);
     };
-    getProfile();
+    fetchCurrentUser();
   }, []);
 
   return (
     <>
-      {isLoading ? (
+      {loading ? (
         <h1>Loading...</h1>
       ) : (
         <>
+          <Banner />
           <Header />
           <div style={{ display: "flex", flex: 1 }}>
             <Sidebar />
-            <div style={{ flex: 1 }}>{children}</div>
+            {children}
           </div>
         </>
       )}
     </>
   );
 };
+
+DefaultLayout.propTypes={
+  children: PropTypes.node.isRequired
+}
 
 export default DefaultLayout;
