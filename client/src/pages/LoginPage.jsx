@@ -1,95 +1,102 @@
 import { useEffect, useState } from "react";
 import "../assets/scss/pages/LoginPage.scss";
 import { useNavigate } from "react-router-dom";
-import { validateLoginForm } from "../validators";
 import api from "../api/axios";
+import Loading from "../components/Loading";
 
 const initState = {
   email: "",
   password: "",
+  error: "",
+  isLoading: false,
+  isAuthLoading: true,
 };
 
 const LoginPage = () => {
-  const [info, setInfo] = useState(initState);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [pageState, setPageState] = useState(initState);
   const navigate = useNavigate();
 
   useEffect(() => {
     const getProfile = async () => {
-      setIsAuthLoading(true);
-      try {
-        const res = await api.get("/api/auth/profile");
-        if (res.data.id) {
-          navigate("/");
+      handleChange("isAuthLoading", true);
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        try {
+          const res = await api.get("/api/auth/profile");
+          if (res.data.id) {
+            navigate("/");
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          handleChange("isAuthLoading", false);
         }
-      } catch (e) {
-        console.error(e);
-        setIsAuthLoading(false);
       }
-      setIsAuthLoading(false);
+      handleChange("isAuthLoading", false);
     };
     getProfile();
   }, []);
 
-  const handleChange = (e) => {
-    setInfo({
-      ...info,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (name, value) => {
+    setPageState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    const { email, password } = info;
-    const { emailError, passwordError } = validateLoginForm(email, password);
-    if (emailError === "" && passwordError === "") {
-      try {
-        const res = await api.post("/api/auth/login", { email, password });
-        localStorage.setItem(
-          "accessToken",
-          JSON.stringify(res.data.access_token)
-        );
-        navigate("/");
-        setInfo(initState);
-        setError("");
-      } catch (e) {
-        if (e.response && e.response.status === 401) {
-          setError(e.response.data);
-        } else {
-          console.error(e);
-        }
-      }
-    } else {
-      setError(emailError || passwordError);
+    handleChange("isLoading", true);
+    const { email, password } = pageState;
+    try {
+      const res = await api.post("/api/auth/login", { email, password });
+      localStorage.setItem(
+        "accessToken",
+        JSON.stringify(res.data.access_token)
+      );
+      localStorage.setItem(
+        "refreshToken",
+        JSON.stringify(res.data.refresh_token)
+      );
+      navigate("/");
+      setPageState(initState);
+    } catch (e) {
+      if (e.response?.status === 401)
+        handleChange("error", e.response.data.message);
+      else console.error(e);
+    } finally {
+      handleChange("isLoading", false);
     }
-    setIsLoading(false);
   };
 
-  return isAuthLoading ? (
-    <h1>Loading...</h1>
+  return pageState.isAuthLoading ? (
+    <Loading />
   ) : (
-    <form method="POST" onSubmit={handleSubmit}>
+    <form method="POST" onSubmit={handleSubmit} className="login-form">
       <h1>WELCOME</h1>
       <input
-        value={info.email}
-        type="text"
+        value={pageState.email}
+        type="email"
         placeholder="Email"
         name="email"
-        onChange={handleChange}
+        onChange={(e) => handleChange(e.target.name, e.target.value)}
+        required
       />
       <input
-        value={info.password}
+        value={pageState.password}
         type="password"
         placeholder="Password"
         name="password"
-        onChange={handleChange}
+        onChange={(e) => handleChange(e.target.name, e.target.value)}
+        required
       />
-      {error && <p className="error-alert">{error}</p>}
-      <button className="login-btn green" type="submit" disabled={isLoading}>
-        {!isLoading ? "Login" : "Loading"}
+      {pageState.error && <p className="error-alert">{pageState.error}</p>}
+      <button
+        className="login-btn green"
+        type="submit"
+        disabled={pageState.isLoading}
+      >
+        {!pageState.isLoading ? "Login" : "Loading"}
       </button>
       <div className="login-option">
         <button className="blue" type="button">

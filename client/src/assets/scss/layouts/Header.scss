@@ -1,36 +1,95 @@
+@import "../Variables.scss";
+@import "../BreakPoints.scss";
+
 .header-container {
-    background: #3ea199;
-    width: 100%;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #f2f2f2;
-    .right {
+  background: $main-bg-color;
+  width: 100%;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: $light-text-color;
+  .left {
+    .dropdown-nav-bar {
+      display: none;
       position: relative;
-      .img-container {
-        background: #f2f2f2;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+      p {
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        i {
+          margin-right: 10px;
+        }
       }
       .dropdown-contents {
         position: absolute;
         display: none;
         white-space: nowrap;
+        width: 150%;
+        a {
+          background: #fff;
+          padding: 10px;
+          color: $main-bg-color;
+          text-decoration: none;
+          font-weight: bold;
+          &:hover {
+            color: #fff;
+            background: $main-bg-color;
+          }
+        }
       }
       &:hover {
         .dropdown-contents {
-          display: block;
-          right: 0;
+          display: flex;
+          flex-direction: column;
           box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-          button {
-            padding: 10px;
-            cursor: pointer;
-            border: none;
-          }
         }
       }
     }
   }
-  
+  .right {
+    position: relative;
+    .img-container {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+    }
+    .dropdown-contents {
+      position: absolute;
+      display: none;
+      white-space: nowrap;
+    }
+    &:hover {
+      .dropdown-contents {
+        display: block;
+        right: 0;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        button {
+          padding: 10px;
+          cursor: pointer;
+          border: none;
+          background: #fff;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoints(md) {
+  .header-container {
+    .left {
+      h4 {
+        display: none;
+      }
+      .dropdown-nav-bar {
+        display: block;
+      }
+    }
+  }
+}

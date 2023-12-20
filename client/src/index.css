@@ -1,13 +1,29 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.container{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    width: auto;
+html {
+  overflow-y: auto;
+}
+.container {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: auto;
+}
+button {
+  cursor: pointer;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+input {
+  padding: 10px;
+}
+li {
+  list-style-type: none;
 }

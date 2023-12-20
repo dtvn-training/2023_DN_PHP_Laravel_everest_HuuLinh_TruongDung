@@ -1,0 +1,140 @@
+@import "../Variables";
+@import "../Mixins";
+@import "../BreakPoints.scss";
+
+.page-container {
+  width: calc(100vw - 300px);
+  padding: 40px;
+  .control-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .left-control {
+      input {
+        @include searchInput;
+      }
+    }
+    .right-control {
+      display: flex;
+      button {
+        @include buttonStyle();
+        margin-left: 10px;
+      }
+    }
+  }
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin-bottom: 10px;
+    .date-input-field {
+      display: flex;
+      align-items: center;
+      label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+      input {
+        border: none;
+        border-bottom: 1px solid $main-border-color;
+        outline: none;
+        margin-right: 10px;
+      }
+    }
+  }
+  .table-container {
+    overflow-x: auto;
+    width: 100%;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      thead {
+        th {
+          color: $light-text-color;
+          background: $main-bg-color;
+          border: 1px solid $main-border-color;
+          padding: 10px;
+          text-decoration: underline;
+          white-space: nowrap;
+        }
+      }
+      tbody {
+        td {
+          border: 1px solid $main-border-color;
+          padding: 10px;
+          text-align: center;
+          white-space: nowrap;
+          .edit-btn {
+            background: $edit-btn-color;
+            color: $light-text-color;
+            margin-right: 10px;
+          }
+          .delete-btn {
+            background: $delete-btn-color;
+            color: $light-text-color;
+          }
+          .double-item-cell {
+            display: flex;
+            align-items: center;
+            .img-container {
+              width: 40px;
+              height: 40px;
+              margin-right: 10px;
+              img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+              }
+            }
+          }
+          &.break-word {
+            overflow-wrap: break-word;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include breakpoints(xl) {
+  .page-container {
+    .control-bar {
+      flex-direction: column;
+      margin-bottom: 10px;
+      .left-control {
+        margin-bottom: 10px;
+      }
+      .right-control {
+        button {
+          margin-left: 0;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+
+@include breakpoints(lg) {
+  .page-container {
+    width: calc(100vw - 200px);
+    padding: 20px;
+  }
+}
+
+@include breakpoints(md) {
+  .page-container {
+    width: 100%;
+    .filter-bar {
+      flex-direction: column;
+      margin: 0;
+      .date-input-field {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
